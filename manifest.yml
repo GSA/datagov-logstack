@@ -11,13 +11,13 @@ applications:
     routes:
       - route: datagov-logdrain.apps.internal
     services:
-      - inventory-elasticsearch
+      - efk-elasticsearch
   - name: efk-kibana
     default-route: false
     memory: 128M
     path: kibana
     services:
-      - inventory-elasticsearch
+      - efk-elasticsearch
       - efk-kibana-secrets
     routes:
       - route: logs-datagov.app.cloud.gov
