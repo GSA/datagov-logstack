@@ -1,0 +1,16 @@
+{
+  "name": "kibana",
+  "version": "1.0.0",
+  "description": "Kibana proxy",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "./start.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Data.gov <datagovhelp@gsa.gov>",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "aws-es-kibana": "^1.0.8"
+  }
+}

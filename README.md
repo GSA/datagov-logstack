@@ -13,7 +13,11 @@ Create an Elasticsearch instance.
 
     $ cf create-service aws-elasticsearch es-medium logdrain-elasticsearch
 
-Push the application.
+Create a user provided service for the Kibana proxy.
+
+    $ cf cups efk-kibana-secrets -p KIBANA_USER,KIBANA_PASSWORD
+
+Push the applications.
 
     $ cf push -f manifest.yml
 
