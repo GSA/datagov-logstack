@@ -2,8 +2,6 @@
 
 set -o errexit
 set -o pipefail
-set -x
-
 
 function vcap_get_service () {
   local path name
@@ -18,8 +16,6 @@ APP_NAME=$(echo $VCAP_APPLICATION | jq -r '.application_name')
 ES_HOST=$(vcap_get_service elasticsearch credentials.host)
 export AWS_ACCESS_KEY_ID=$(vcap_get_service elasticsearch credentials.access_key)
 export AWS_SECRET_ACCESS_KEY=$(vcap_get_service elasticsearch credentials.secret_key)
-
-#sleep 3600
 
 # TODO how to add this to PATH?
 # https://github.com/cloudfoundry/apt-buildpack/issues/25

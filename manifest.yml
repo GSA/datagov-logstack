@@ -1,9 +1,14 @@
 ---
 applications:
-  - name: logdrain
+  - name: efk-fluent
     buildpacks:
       - https://github.com/cloudfoundry/apt-buildpack
       - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
+    default-route: false
     health-check-type: process
+    memory: 128M
+    path: fluent
+    routes:
+      - route: datagov-logdrain.apps.internal
     services:
       - inventory-elasticsearch
