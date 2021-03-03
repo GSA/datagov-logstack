@@ -3,10 +3,24 @@
 Run your own Elasticsearch-Fluentd-Kibana stack on cloud.gov using AWS Open
 Distro Elasticsearch.
 
+## Setup
+
+Set your application name.
+
+    $ app_name=logdrain
+
+Create an Elasticsearch instance.
+
+    $ cf create-service aws-elasticsearch es-medium logdrain-elasticsearch
+
+Push the application.
+
+    $ cf push -f manifest.yml
 
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for additional information.
+
 
 ## Public domain
 

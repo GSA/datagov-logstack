@@ -1,0 +1,1 @@
+web: ./fluent-bit.sh
