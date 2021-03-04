@@ -21,6 +21,14 @@ Push the applications.
 
     $ cf push -f manifest.yml
 
+## Development
+
+Build and publish logstash container.
+
+    $ docker build logstash -t adborden/datagov-logstash:7.4.2
+    $ docker push adborden/datagov-logstash:7.4.2
+
+
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for additional information.

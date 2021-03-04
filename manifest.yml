@@ -12,6 +12,21 @@ applications:
       - route: datagov-logdrain.apps.internal
     services:
       - efk-elasticsearch
+  - name: efk-logstash
+    default-route: false
+    docker:
+      image: adborden/datagov-logstash:7.4.2
+    env:
+      ES_REGION: us-gov-west-1
+      _JAVA_OPTIONS: -Xms512m -Xmx512m
+    health-check-type: process
+    memory: 512M
+    path: logstash
+    command: /usr/share/logstash/bin/start.sh
+    routes:
+      - route: datagov-logstash.apps.internal
+    services:
+      - efk-elasticsearch
   - name: efk-kibana
     default-route: false
     memory: 128M
