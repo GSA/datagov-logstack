@@ -1,25 +1,38 @@
-# datagov-logdrain
+# datagov-logstack
 
-Run your own Elasticsearch-Logstash-Kibana stack on cloud.gov using AWS Open
-Distro Elasticsearch.
+Run your own logging stack on cloud.gov using AWS Open Distro Elasticsearch.
+
 
 ## Setup
 
 Set your application name.
 
-    $ app_name=logdrain
+    $ app_name=logstack
+
+Copy `vars.example.yml` to `vars.yml` (or a space-specific version) and
+customize for your application.
 
 Create an Elasticsearch instance.
 
-    $ cf create-service aws-elasticsearch es-medium logdrain-elasticsearch
+    $ cf create-service aws-elasticsearch es-medium ${app_name}-elasticsearch
 
-Create a user provided service for the Kibana proxy.
-
-    $ cf cups efk-kibana-secrets -p KIBANA_USER,KIBANA_PASSWORD
+Create a user provided service for [secrets](#secrets).
 
 Push the applications.
 
-    $ cf push -f manifest.yml
+    $ cf push --manifest manifest.yml --vars-file vars.yml
+
+
+## Secrets
+
+Generate some secrets for the logstack applications via a user provided service.
+
+  $ cf cups ${app_name}-secrets -p KIBANA_USER,KIBANA_PASSWORD,LOGSTASH_USER,LOGSTASH_PASSWORD
+
+Name | Description | Where to find?
+---- | ----------- | --------------
+KIBANA_PASSWORD | Password for basic authentication on the Kibana proxy | randomly generated
+KIBANA_USER | Username for basic authentication on the Kibana proxy | randomly generated
 
 
 ## Logstash vs Fluentd
@@ -42,8 +55,8 @@ Logstash Pros:
 
 Build and publish logstash container.
 
-    $ docker build logstash -t adborden/datagov-logstash:7.4.2
-    $ docker push adborden/datagov-logstash:7.4.2
+    $ docker build logstash -t datagov/datagov-logstash:7.4.2
+    $ docker push datagov/datagov-logstash:7.4.2
 
 
 ## Contributing

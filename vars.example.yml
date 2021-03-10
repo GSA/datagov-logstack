@@ -1,0 +1,17 @@
+---
+# Name prefix for applications in the logstack.
+app_name: logstack
+
+# Number of instances of the Kibana proxy to run.
+kibana_instances: 1
+# Assign routes for the Kibana proxy. This is how you'll access Kibana.
+kibana_routes:
+  - route: logs-stage-datagov.app.cloud.gov
+
+# Number of instances of the Logstash to run.
+logstash_instances: 1
+# Amount of memory to provide to the Logstash Java application.
+logstash_memory: 512
+# Assign routes for Logstash. This will be used as the logdrain for other Cloud Foundry applications.
+logstash_routes:
+  - route: logstash-stage-datagov.app.cloud.gov
