@@ -1,17 +1,20 @@
 ---
 applications:
-  - name: efk-fluent
-    buildpacks:
-      - https://github.com/cloudfoundry/apt-buildpack
-      - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
-    default-route: false
-    health-check-type: process
-    memory: 128M
-    path: fluent
-    routes:
-      - route: datagov-logdrain.apps.internal
-    services:
-      - efk-elasticsearch
+  # TODO remove this after logstash configuration for Cloud Foundry is complete
+  # This is provided here while we're evaluating logstash vs fluentd. Once
+  # decided, this should be removed.
+  #- name: efk-fluent
+  #  buildpacks:
+  #    - https://github.com/cloudfoundry/apt-buildpack
+  #    - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
+  #  default-route: false
+  #  health-check-type: process
+  #  memory: 128M
+  #  path: fluent
+  #  routes:
+  #    - route: datagov-logdrain.apps.internal
+  #  services:
+  #    - efk-elasticsearch
   - name: efk-logstash
     default-route: false
     docker:

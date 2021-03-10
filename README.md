@@ -1,6 +1,6 @@
 # datagov-logdrain
 
-Run your own Elasticsearch-Fluentd-Kibana stack on cloud.gov using AWS Open
+Run your own Elasticsearch-Logstash-Kibana stack on cloud.gov using AWS Open
 Distro Elasticsearch.
 
 ## Setup
@@ -20,6 +20,23 @@ Create a user provided service for the Kibana proxy.
 Push the applications.
 
     $ cf push -f manifest.yml
+
+
+## Logstash vs Fluentd
+
+_Documenting some notes about running Fluentd vs Logstash as Cloud Foundry
+applications, configured for parsing Cloud Foundry logs._
+
+Fludentd (fluent-bit specifically) Pros:
+
+- Smaller memory footprint
+- Simple "out-of-the box" cf application
+
+
+Logstash Pros:
+
+- Lots of existing Cloud Foundry configuration exists
+
 
 ## Development
 
