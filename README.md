@@ -5,6 +5,16 @@ Run your own logging stack on cloud.gov using AWS Open Distro Elasticsearch.
 
 ## Usage
 
+### Kibana
+
+Use `cf env logstack-kibana` to get the basic authentication credentials.
+
+Environment | URL
+----------- | ---
+management-staging | [logs-stage-datagov.app.cloud.gov](https://logs-stage-datagov.app.cloud.gov/_plugin/kibana/app/kibana)
+management | [logs-datagov.app.cloud.gov](https://logs-datagov.app.cloud.gov/_plugin/kibana/app/kibana)
+
+
 ### Log drains
 
 Use the [drain
