@@ -103,15 +103,6 @@ logstack-logstash | Logstash process that aggregates and parses log data.
 logstack-space-drain | Space drain monitors the CF space, binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 
 
-## Development
-
-Build and publish logstash container. _TODO build this in CI
-https://github.com/GSA/datagov-deploy/issues/2976._
-
-    $ docker build logstash -t datagov/logstash:7.4.2
-    $ docker push datagov/logstash:7.4.2
-
-
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for additional information.
