@@ -1,0 +1,86 @@
+---
+name: commit
+
+on:
+  push:
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build logstash
+        run: docker build logstash -t datagov/logstash:7.4.2
+      - name: test
+        # TODO https://github.com/GSA/datagov-deploy/issues/2975
+        run: echo ok
+
+  deploy-management-staging:
+    if: github.ref == 'refs/heads/main'
+    name: deploy (management-staging)
+    environment: management-staging
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: deploy kibana proxy
+        uses: usds/cloud-gov-cli@master
+        with:
+          command: push logstack-kibana --vars-file vars.management-staging.yml --strategy rolling
+          org: gsa-datagov
+          space: management-staging
+          user: ${{secrets.CF_SERVICE_USER}}
+          password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test kibana proxy
+        run: |
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logs-stage-datagov.app.cloud.gov)" ]
+      - name: deploy logstash
+        uses: usds/cloud-gov-cli@master
+        with:
+          command: push logstack-logstash --vars-file vars.management-staging.yml --strategy rolling
+          org: gsa-datagov
+          space: management-staging
+          user: ${{secrets.CF_SERVICE_USER}}
+          password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test logstash
+        run: |
+          sleep 20  # Logstash is very slow to start up
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
+
+  deploy-management:
+    if: github.ref == 'refs/heads/main'
+    name: deploy (management)
+    environment: management
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-management-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: deploy kibana proxy
+        uses: usds/cloud-gov-cli@master
+        with:
+          command: push logstack-kibana --vars-file vars.management.yml --strategy rolling
+          org: gsa-datagov
+          space: management
+          user: ${{secrets.CF_SERVICE_USER}}
+          password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test kibana proxy
+        run: |
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logs-datagov.app.cloud.gov)" ]
+      - name: deploy logstash
+        uses: usds/cloud-gov-cli@master
+        with:
+          command: push logstack-logstash --vars-file vars.management.yml --strategy rolling
+          org: gsa-datagov
+          space: management
+          user: ${{secrets.CF_SERVICE_USER}}
+          password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test logstash
+        run: |
+          sleep 20  # Logstash is very slow to start up
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-prod-datagov.app.cloud.gov)" ]

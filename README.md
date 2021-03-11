@@ -105,10 +105,11 @@ logstack-space-drain | Space drain monitors the CF space, binds the log drain to
 
 ## Development
 
-Build and publish logstash container.
+Build and publish logstash container. _TODO build this in CI
+https://github.com/GSA/datagov-deploy/issues/2976._
 
-    $ docker build logstash -t datagov/datagov-logstash:7.4.2
-    $ docker push datagov/datagov-logstash:7.4.2
+    $ docker build logstash -t datagov/logstash:7.4.2
+    $ docker push datagov/logstash:7.4.2
 
 
 ## Contributing
