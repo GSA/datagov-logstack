@@ -7,14 +7,16 @@ function vcap_get_service () {
   local path name
   name="$1"
   path="$2"
-  echo $VCAP_SERVICES | jq --raw-output --arg service_name "$name" ".[][] | select(.name == \$service_name) | .$path"
+  service_name=${APP_NAME}-${name}
+  echo $VCAP_SERVICES | jq --raw-output --arg service_name "$service_name" ".[][] | select(.name == \$service_name) | .$path"
 }
 
-ES_URI=$(vcap_get_service efk-elasticsearch credentials.uri)
-export AUTH_USER=$(vcap_get_service efk-kibana-secrets credentials.KIBANA_USER)
-export AUTH_PASSWORD=$(vcap_get_service efk-kibana-secrets credentials.KIBANA_PASSWORD)
-export AWS_ACCESS_KEY_ID=$(vcap_get_service efk-elasticsearch credentials.access_key)
-export AWS_SECRET_ACCESS_KEY=$(vcap_get_service efk-elasticsearch credentials.secret_key)
+
+ES_URI=$(vcap_get_service elasticsearch credentials.uri)
+export AUTH_USER=$(vcap_get_service secrets credentials.KIBANA_USER)
+export AUTH_PASSWORD=$(vcap_get_service secrets credentials.KIBANA_PASSWORD)
+export AWS_ACCESS_KEY_ID=$(vcap_get_service elasticsearch credentials.access_key)
+export AWS_SECRET_ACCESS_KEY=$(vcap_get_service elasticsearch credentials.secret_key)
 
 mkdir -p $HOME/.aws
 touch $HOME/.aws/credentials

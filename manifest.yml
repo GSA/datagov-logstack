@@ -1,23 +1,45 @@
 ---
 applications:
-  - name: efk-fluent
-    buildpacks:
-      - https://github.com/cloudfoundry/apt-buildpack
-      - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
+  # TODO remove this after logstash configuration for Cloud Foundry is complete
+  # This is provided here while we're evaluating logstash vs fluentd. Once
+  # decided, this should be removed.
+  #- name: ((app_name))-fluent
+  #  buildpacks:
+  #    - https://github.com/cloudfoundry/apt-buildpack
+  #    - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
+  #  default-route: false
+  #  health-check-type: process
+  #  memory: 128M
+  #  path: fluent
+  #  routes:
+  #    - route: datagov-logdrain.apps.internal
+  #  services:
+  #    - efk-elasticsearch
+  - name: ((app_name))-logstash
     default-route: false
+    docker:
+      image: datagov/datagov-logstash:7.4.2
+    env:
+      APP_NAME: ((app_name))
+      ES_REGION: us-gov-west-1
+      _JAVA_OPTIONS: ((logstash_java_options))
     health-check-type: process
-    memory: 128M
-    path: fluent
-    routes:
-      - route: datagov-logdrain.apps.internal
+    instances: ((logstash_instances))
+    memory: ((logstash_memory))M
+    path: logstash
+    command: /usr/share/logstash/bin/start.sh
+    routes: ((logstash_routes))
     services:
-      - efk-elasticsearch
-  - name: efk-kibana
+      - ((app_name))-elasticsearch
+      - ((app_name))-secrets
+  - name: ((app_name))-kibana
     default-route: false
-    memory: 128M
+    env:
+      APP_NAME: ((app_name))
+    instances: ((kibana_instances))
+    memory: 64M
     path: kibana
     services:
-      - efk-elasticsearch
-      - efk-kibana-secrets
-    routes:
-      - route: logs-datagov.app.cloud.gov
+      - ((app_name))-elasticsearch
+      - ((app_name))-secrets
+    routes: ((kibana_routes))
