@@ -22,7 +22,7 @@ applications:
     env:
       APP_NAME: ((app_name))
       ES_REGION: us-gov-west-1
-      _JAVA_OPTIONS: -Xms((logstash_memory))m -Xmx((logstash_memory))m
+      _JAVA_OPTIONS: ((logstash_java_options))
     health-check-type: process
     instances: ((logstash_instances))
     memory: ((logstash_memory))M
