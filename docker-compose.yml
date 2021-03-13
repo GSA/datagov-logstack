@@ -1,0 +1,37 @@
+---
+version: "3.7"
+services:
+  logstash:
+    build: logstash
+    depends_on:
+      - elasticsearch
+    environment:
+      AWS_ACCESS_KEY_ID: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY: aws_secret_access_key
+      ENABLE_OUTPUT_ES: 1
+      ENABLE_OUTPUT_STDOUT: 1
+      ES_HOST: elasticsearch
+      ES_REGION: us-east-1
+      LOGSTASH_USER: logstash
+      LOGSTASH_PASSWORD: logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+      - "9700:9700"
+
+  elasticsearch:
+    environment:
+      discovery.type: single-node
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.4.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  test:
+    build:
+      context: .
+      dockerfile: test/Dockerfile
+    depends_on:
+      - logstash
+    volumes:
+      - .:/app

@@ -29,6 +29,9 @@ Logstash (`logstash_routes`) and include the basic authentication credentials in
 your user-provided service (see [secrets](#secrets)). _Note: creating
 a space-wide drain may require org admin permissions in Cloud Foundry._
 
+**Warning:** Do not add a space drain to the logstack-logstash's space or add the log
+drain to itself. You'll amplify the logs and impact cloud.gov's loggregator.
+
     $ app_name=logstack
     $ space=production
     $ logstash_url=https://${logstash_user}:${logstash_password}@${logstash_route}
@@ -39,6 +42,11 @@ _Note: we include the space name in the drain name to work around
 https://github.com/cloudfoundry/cf-drain-cli/issues/27._
 
 After a short delay, logs should begin to flow automatically.
+
+
+### Elasticsearch
+
+- [Elasticsearch 7.4 docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index.html)
 
 
 ## Setup
@@ -105,10 +113,9 @@ logstack-space-drain | Space drain monitors the CF space, binds the log drain to
 
 ## Development
 
-Build and publish logstash container.
+Run tests.
 
-    $ docker build logstash -t datagov/datagov-logstash:7.4.2
-    $ docker push datagov/datagov-logstash:7.4.2
+    $ docker-compose run --rm test
 
 
 ## Contributing
