@@ -29,6 +29,9 @@ Logstash (`logstash_routes`) and include the basic authentication credentials in
 your user-provided service (see [secrets](#secrets)). _Note: creating
 a space-wide drain may require org admin permissions in Cloud Foundry._
 
+**Warning:** Do not add a space drain to the logstack-logstash's space or add the log
+drain to itself. You'll amplify the logs and impact cloud.gov's loggregator.
+
     $ app_name=logstack
     $ space=production
     $ logstash_url=https://${logstash_user}:${logstash_password}@${logstash_route}
