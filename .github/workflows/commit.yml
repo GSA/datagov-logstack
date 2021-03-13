@@ -14,8 +14,7 @@ jobs:
       - name: build logstash
         run: docker build logstash -t datagov/logstash:7.4.2
       - name: test
-        # TODO https://github.com/GSA/datagov-deploy/issues/2975
-        run: echo ok
+        run: docker-compose run --rm test
 
   publish:
     name: publish
