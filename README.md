@@ -41,6 +41,11 @@ https://github.com/cloudfoundry/cf-drain-cli/issues/27._
 After a short delay, logs should begin to flow automatically.
 
 
+### Elasticsearch
+
+- [Elasticsearch 7.4 docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index.html)
+
+
 ## Setup
 
 Set your application name.
