@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: build logstash
-        run: docker build logstash -t datagov/logstash:7.4.2
       - name: test
         run: docker-compose run --rm test
 
