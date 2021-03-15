@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-YARGSPARSER-560381:
+    - aws-es-kibana > yargs > yargs-parser:
+        reason: >-
+          Command line input is controlled by developers. User input is not used
+          as command line arguments.
+        expires: '2021-04-12T02:14:15.382Z'
+patch: {}

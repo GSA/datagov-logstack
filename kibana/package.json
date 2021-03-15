@@ -1,5 +1,5 @@
 {
-  "name": "kibana",
+  "name": "datagov-kibana-proxy",
   "version": "1.0.0",
   "description": "Kibana proxy",
   "private": true,
