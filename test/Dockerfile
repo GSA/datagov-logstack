@@ -9,4 +9,4 @@ COPY Pipfile Pipfile.lock  /app/
 RUN pipenv install --dev
 
 ENTRYPOINT ["pipenv", "run"]
-CMD ["python", "-m", "unittest"]
+CMD ["pytest"]

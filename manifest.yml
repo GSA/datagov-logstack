@@ -21,8 +21,9 @@ applications:
       image: ghcr.io/gsa/datagov-logstash:7.4.2
     env:
       APP_NAME: ((app_name))
-      ENABLE_OUTPUT_AWS_ES: 1
       ES_REGION: us-gov-west-1
+      ES_PORT: "443"
+      ES_PROTOCOL: https
       _JAVA_OPTIONS: ((logstash_java_options))
     health-check-type: process
     instances: ((logstash_instances))
