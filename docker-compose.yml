@@ -8,9 +8,9 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: aws_access_key_id
       AWS_SECRET_ACCESS_KEY: aws_secret_access_key
-      ENABLE_OUTPUT_ES: 1
-      ENABLE_OUTPUT_STDOUT: 1
       ES_HOST: elasticsearch
+      ES_PORT: "9200"
+      ES_PROTOCOL: http
       ES_REGION: us-east-1
       LOGSTASH_USER: logstash
       LOGSTASH_PASSWORD: logstash
