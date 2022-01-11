@@ -2,12 +2,6 @@
 # Name prefix for applications in the logstack.
 app_name: logstack
 
-# Number of instances of the Kibana proxy to run.
-kibana_instances: 1
-# Assign routes for the Kibana proxy. This is how you'll access Kibana.
-kibana_routes:
-  - route: logs-stage-datagov.app.cloud.gov
-
 # Options to pass the JVM
 logstash_java_options: -Xms256m -Xmx512m
 # Number of instances of the Logstash to run.

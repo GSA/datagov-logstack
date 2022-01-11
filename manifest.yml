@@ -1,47 +1,17 @@
 ---
 applications:
-  # TODO remove this after logstash configuration for Cloud Foundry is complete
-  # This is provided here while we're evaluating logstash vs fluentd. Once
-  # decided, this should be removed.
-  #- name: ((app_name))-fluent
-  #  buildpacks:
-  #    - https://github.com/cloudfoundry/apt-buildpack
-  #    - https://github.com/cloudfoundry/python-buildpack  # apt-buildpack is a supply buildpack and cannot run alone
-  #  default-route: false
-  #  health-check-type: process
-  #  memory: 128M
-  #  path: fluent
-  #  routes:
-  #    - route: datagov-logdrain.apps.internal
-  #  services:
-  #    - efk-elasticsearch
-  - name: ((app_name))-logstash
-    default-route: false
-    docker:
-      image: ghcr.io/gsa/datagov-logstash:7.4.2
-    env:
-      APP_NAME: ((app_name))
-      ES_REGION: us-gov-west-1
-      ES_PORT: "443"
-      ES_PROTOCOL: https
-      _JAVA_OPTIONS: ((logstash_java_options))
-    health-check-type: process
-    instances: ((logstash_instances))
-    memory: ((logstash_memory))M
-    path: logstash
-    command: /usr/share/logstash/bin/start.sh
-    routes: ((logstash_routes))
-    services:
-      - ((app_name))-elasticsearch
-      - ((app_name))-secrets
-  - name: ((app_name))-kibana
-    default-route: false
-    env:
-      APP_NAME: ((app_name))
-    instances: ((kibana_instances))
-    memory: 64M
-    path: kibana
-    services:
-      - ((app_name))-elasticsearch
-      - ((app_name))-secrets
-    routes: ((kibana_routes))
+- name: ((app_name))-logstash
+  docker:
+    image: ghcr.io/gsa/datagov-logstash:7.16.2
+  env:
+    APP_NAME: ((app_name))
+    _JAVA_OPTIONS: ((logstash_java_options))
+  health-check-type: process
+  instances: ((logstash_instances))
+  memory: ((logstash_memory))M
+  path: logstash
+  command: /usr/share/logstash/bin/start.sh
+  routes: ((logstash_routes))
+  services:
+    - ((app_name))-s3
+    - ((app_name))-secrets

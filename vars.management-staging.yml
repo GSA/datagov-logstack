@@ -1,10 +1,6 @@
 ---
 app_name: logstack
 
-kibana_instances: 0
-kibana_routes:
-  - route: logs-stage-datagov.app.cloud.gov
-
 logstash_java_options: -Xms256m -Xmx512m
 logstash_instances: 1
 logstash_memory: 576

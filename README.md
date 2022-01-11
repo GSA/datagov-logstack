@@ -5,15 +5,6 @@ Run your own logging stack on cloud.gov using AWS Open Distro Elasticsearch.
 
 ## Usage
 
-### Kibana
-
-Use `cf env logstack-kibana` to get the basic authentication credentials.
-
-Environment | URL
------------ | ---
-management-staging | [logs-stage-datagov.app.cloud.gov](https://logs-stage-datagov.app.cloud.gov/_plugin/kibana/app/kibana)
-management | [logs-datagov.app.cloud.gov](https://logs-datagov.app.cloud.gov/_plugin/kibana/app/kibana)
-
 
 ### Log drains
 
@@ -73,30 +64,12 @@ Push the applications.
 
 Generate some secrets for the logstack applications via a user provided service.
 
-  $ cf cups ${app_name}-secrets -p KIBANA_USER,KIBANA_PASSWORD,LOGSTASH_USER,LOGSTASH_PASSWORD
+  $ cf cups ${app_name}-secrets -p LOGSTASH_USER,LOGSTASH_PASSWORD
 
 Name | Description | Where to find?
 ---- | ----------- | --------------
-KIBANA_PASSWORD | Password for basic authentication on the Kibana proxy | randomly generated
-KIBANA_USER | Username for basic authentication on the Kibana proxy | randomly generated
 LOGSTASH_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
 LOGSTASH_USER | Username for basic authentication on the Logstash proxy | randomly generated
-
-
-## Logstash vs Fluentd
-
-_Documenting some notes about running Fluentd vs Logstash as Cloud Foundry
-applications, configured for parsing Cloud Foundry logs._
-
-Fludentd (fluent-bit specifically) Pros:
-
-- Smaller memory footprint
-- Simple "out-of-the box" cf application
-
-
-Logstash Pros:
-
-- Lots of existing Cloud Foundry configuration exists
 
 
 ## Applications
@@ -106,7 +79,6 @@ applications.
 
 Name | Description
 ---- | -----------
-logstack-kibana | Kibana proxy provides authentication to Kibana.
 logstack-logstash | Logstash process that aggregates and parses log data.
 logstack-space-drain | Space drain monitors the CF space, binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 

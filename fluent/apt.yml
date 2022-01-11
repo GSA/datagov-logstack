@@ -1,7 +1,0 @@
----
-keys:
-  - https://packages.fluentbit.io/fluentbit.key
-packages:
-  - td-agent-bit
-repos:
-  - deb https://packages.fluentbit.io/ubuntu/bionic bionic main
