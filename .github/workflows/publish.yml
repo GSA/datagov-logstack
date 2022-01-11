@@ -29,9 +29,9 @@ jobs:
           tags: ghcr.io/gsa/datagov-logstash
           labels: $TAG
   
-  create-cloudgov-services-staging:
-    name: create services (staging)
-    environment: staging
+  create-cloudgov-services-management-staging:
+    name: create services (management-staging)
+    environment: management-staging
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -41,24 +41,24 @@ jobs:
         with:
           command: ./create-cloudgov-services.sh
           cf_org: gsa-datagov
-          cf_space: staging
+          cf_space: management-staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}} 
   
-  deploy-staging:
+  deploy-management-staging:
     name: deploy (management-staging)
     environment: management-staging
     runs-on: ubuntu-latest
     needs:
       - publish
-      - create-cloudgov-services-staging
+      - create-cloudgov-services-management-staging
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: deploy-logstash
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf push logstack-logstash --vars-file vars.staging.yml --strategy rolling
+          command: cf push logstack-logstash --vars-file vars.management-staging.yml --strategy rolling
           cf_org: gsa-datagov
           cf_space: management-staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -68,9 +68,9 @@ jobs:
           sleep 20  # Logstash is very slow to start up 
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
 
-  create-cloudgov-services-production:
-    name: create services (production)
-    environment: production
+  create-cloudgov-services-management:
+    name: create services (management)
+    environment: management
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -80,26 +80,26 @@ jobs:
         with:
           command: ./create-cloudgov-services.sh
           cf_org: gsa-datagov
-          cf_space: prod
+          cf_space: management
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
 
-  deploy-production:
-    name: deploy (production)
-    environment: production
+  deploy-management:
+    name: deploy (management)
+    environment: management
     runs-on: ubuntu-latest
     needs:
-      - create-cloudgov-services-production
-      - deploy-staging
+      - create-cloudgov-services-management
+      - deploy-management-staging
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: deploy-logstash
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf push catalog --vars-file vars.production.yml --strategy rolling
+          command: cf push catalog --vars-file vars.management.yml --strategy rolling
           cf_org: gsa-datagov
-          cf_space: prod
+          cf_space: management
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
       - name: smoke test
