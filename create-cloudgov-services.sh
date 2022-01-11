@@ -10,7 +10,7 @@ app_name=${1:-logstack}
 space=$(cf target | grep space | cut -d : -f 2 | xargs)
 
 # Only create stuff in production and staging spaces
-if [ "$space" = "prod" ] || [ "$space" = "staging" ]; then
+if [ "$space" = "management" ] || [ "$space" = "management-staging" ]; then
     cf service "${app_name}-s3"      > /dev/null 2>&1 || cf create-service s3 basic "${app_name}-s3" --wait&
 fi
 
