@@ -1,6 +1,6 @@
 # datagov-logstack
 
-Run your own logging stack on cloud.gov using AWS Open Distro Elasticsearch.
+Drain logs from cloud.gov into your custom logging solution
 
 ## Usage
 
@@ -31,10 +31,6 @@ _Note: we include the space name in the drain name to work around [this issue](h
 
 After a short delay, logs should begin to flow automatically.
 
-### Elasticsearch
-
-- [Elasticsearch 7.4 docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index.html)
-
 ## Setup
 
 Set your application name.
@@ -44,21 +40,21 @@ Set your application name.
 Copy `vars.example.yml` to `vars.yml` (or a space-specific version) and
 customize for your application.
 
-Create an Elasticsearch instance.
+Create an S3 bucket instance.
 
-    cf create-service aws-elasticsearch es-medium ${app_name}-elasticsearch
+    cf create-service s3 basic ${app_name}-s3
 
 Create a user provided service for [secrets](#secrets).
 
 Push the applications.
 
-    cf push --manifest manifest.yml --vars-file vars.yml
+    cf push --vars-file vars.yml
 
 ## Secrets
 
-Generate some secrets for the logstack applications via a user provided service.
+Provide secrets for the logstack applications via a [user-provided service](https://docs.cloudfoundry.org/devguide/services/user-provided.html).
 
-  $ cf cups ${app_name}-secrets -p LOGSTASH_USER,LOGSTASH_PASSWORD
+    cf cups ${app_name}-secrets -p LOGSTASH_USER,LOGSTASH_PASSWORD
 
 Name | Description | Where to find?
 ---- | ----------- | --------------
@@ -73,7 +69,7 @@ applications.
 Name | Description
 ---- | -----------
 logstack-logstash | Logstash process that aggregates and parses log data.
-logstack-space-drain | Space drain monitors the CF space, binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
+logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 
 ## Development
 
