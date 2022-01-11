@@ -10,18 +10,19 @@ function vcap_get_service () {
   echo $VCAP_SERVICES | grep -Po "\"${field}\":\\s\"\\K(.*?)(?=\")"
 }
 
-function parse_vcap_servies () {
+function parse_vcap_services () {
   if [[ -z "$VCAP_SERVICES" ]]; then
     return 0
   fi
 
-  export AWS_ACCESS_KEY_ID=$(vcap_get_service access_key)
-  export AWS_SECRET_ACCESS_KEY=$(vcap_get_service secret_key)
-  export ES_HOST=$(vcap_get_service host)
+  export AWS_ACCESS_KEY_ID=$(vcap_get_service access_key_id)
+  export AWS_SECRET_ACCESS_KEY=$(vcap_get_service secret_access_key)
+  export AWS_REGION=$(vcap_get_service region)
+  export AWS_BUCKET=$(vcap_get_service bucket)
   export LOGSTASH_PASSWORD=$(vcap_get_service LOGSTASH_PASSWORD)
   export LOGSTASH_USER=$(vcap_get_service LOGSTASH_USER)
 }
 
-parse_vcap_servies
+parse_vcap_services
 
 exec /usr/local/bin/docker-entrypoint
