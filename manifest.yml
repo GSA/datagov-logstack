@@ -2,7 +2,7 @@
 applications:
 - name: ((app_name))-logstash
   docker:
-    image: ghcr.io/gsa/datagov-logstash:7.16.2
+    image: ghcr.io/gsa/datagov-logstash:latest
   env:
     APP_NAME: ((app_name))
     _JAVA_OPTIONS: ((logstash_java_options))
