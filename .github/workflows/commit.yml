@@ -34,7 +34,7 @@ jobs:
         with:
           context: logstash
           push: true
-          tags: ghcr.io/gsa/datagov-logstash:7.4.2
+          tags: ghcr.io/gsa/datagov-logstash:7.16.2
 
   deploy-management-staging:
     if: github.ref == 'refs/heads/main'
@@ -47,17 +47,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: deploy kibana proxy
-        uses: usds/cloud-gov-cli@master
-        with:
-          command: push logstack-kibana --vars-file vars.management-staging.yml --strategy rolling
-          org: gsa-datagov
-          space: management-staging
-          user: ${{secrets.CF_SERVICE_USER}}
-          password: ${{secrets.CF_SERVICE_AUTH}}
-      - name: smoke test kibana proxy
-        run: |
-          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logs-stage-datagov.app.cloud.gov)" ]
       - name: deploy logstash
         uses: usds/cloud-gov-cli@master
         with:
