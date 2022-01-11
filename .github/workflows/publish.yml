@@ -1,0 +1,72 @@
+---
+name: publish & deploy
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  publish:
+    name: publish LogStash docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: publish catalog.data.gov
+        uses: docker/build-push-action@v2
+        with:
+          context: logstash
+          push: true
+          tags: ghcr.io/gsa/datagov-logstash:${GITHUB_REF#refs/*/}
+  
+  deploy-staging:
+    if: github.ref == 'refs/heads/main'
+    name: deploy (management-staging)
+    environment: management-staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: deploy-logstash
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: cf push logstack-logstash --vars-file vars.staging.yml --strategy rolling
+          cf_org: gsa-datagov
+          cf_space: management-staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test logstash
+        run: |
+          sleep 20  # Logstash is very slow to start up 
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
+
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    name: deploy (production)
+    environment: production
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: deploy-logstash
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: cf push catalog --vars-file vars.production.yml --strategy rolling
+          cf_org: gsa-datagov
+          cf_space: prod
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: smoke test
+        run: |
+          sleep 20  # Logstash is very slow to start up
+          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
