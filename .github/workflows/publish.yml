@@ -21,10 +21,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: publish catalog.data.gov
         uses: docker/build-push-action@v2
+        env:
+          TAG: ${{ github.ref_name }}
         with:
           context: logstash
           push: true
-          tags: ghcr.io/gsa/datagov-logstash:${{GITHUB_REF#refs/*/}}
+          tags: ghcr.io/gsa/datagov-logstash
+          labels: $TAG
   
   create-cloudgov-services-staging:
     if: github.ref == 'refs/heads/main'
