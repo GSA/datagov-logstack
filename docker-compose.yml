@@ -1,17 +1,52 @@
 ---
-version: "3.7"
+# Some of this info was necessary for this to work:
+# https://discuss.elastic.co/t/logstash-s3-output-plugin-with-aws-emulation-with-localstack/255822
 services:
-  logstash:
-    build: logstash
-    depends_on:
-      - elasticsearch
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - awslocal s3 ls
+      interval: 5s
+      timeout: 10s
+      start_period: 10s
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4571:4571"
     environment:
-      AWS_ACCESS_KEY_ID: aws_access_key_id
-      AWS_SECRET_ACCESS_KEY: aws_secret_access_key
-      ES_HOST: elasticsearch
-      ES_PORT: "9200"
-      ES_PROTOCOL: http
-      ES_REGION: us-east-1
+      - SERVICES=${SERVICES-}
+      - DEBUG=${DEBUG-}
+      - DATA_DIR=${DATA_DIR-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./localstack.d:/docker-entrypoint-initaws.d
+  
+ 
+  logstash:
+    depends_on:
+      localstack:
+        condition: service_healthy
+    healthcheck:
+      test: bin/logstash -t
+      interval: 60s
+      timeout: 50s
+      retries: 5
+    build: logstash
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: us-east-1
+      AWS_BUCKET: logstash-bucket
+      AWS_ENDPOINT: http://localstack:4566
       LOGSTASH_USER: logstash
       LOGSTASH_PASSWORD: logstash
     ports:
@@ -19,19 +54,12 @@ services:
       - "9600:9600"
       - "9700:9700"
 
-  elasticsearch:
-    environment:
-      discovery.type: single-node
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.4.2
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-
   test:
     build:
       context: .
       dockerfile: test/Dockerfile
     depends_on:
-      - logstash
+      logstash:
+        condition: service_healthy
     volumes:
       - .:/app
