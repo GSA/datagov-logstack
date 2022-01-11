@@ -26,11 +26,30 @@ jobs:
           push: true
           tags: ghcr.io/gsa/datagov-logstash:${GITHUB_REF#refs/*/}
   
+  create-cloudgov-services-staging:
+    if: github.ref == 'refs/heads/main'
+    name: create services (staging)
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: create services
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: ./create-cloudgov-services.sh
+          cf_org: gsa-datagov
+          cf_space: staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}} 
+  
   deploy-staging:
     if: github.ref == 'refs/heads/main'
     name: deploy (management-staging)
     environment: management-staging
     runs-on: ubuntu-latest
+    needs:
+      - create-cloudgov-services-staging
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -47,6 +66,22 @@ jobs:
           sleep 20  # Logstash is very slow to start up 
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
 
+  create-cloudgov-services-production:
+    if: github.ref == 'refs/heads/main'
+    name: create services (production)
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: create services
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: ./create-cloudgov-services.sh
+          cf_org: gsa-datagov
+          cf_space: prod
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -54,6 +89,7 @@ jobs:
     environment: production
     runs-on: ubuntu-latest
     needs:
+      - create-cloudgov-services-production
       - deploy-staging
     steps:
       - name: checkout
