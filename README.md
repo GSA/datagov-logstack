@@ -2,9 +2,7 @@
 
 Run your own logging stack on cloud.gov using AWS Open Distro Elasticsearch.
 
-
 ## Usage
-
 
 ### Log drains
 
@@ -23,42 +21,38 @@ a space-wide drain may require org admin permissions in Cloud Foundry._
 **Warning:** Do not add a space drain to the logstack-logstash's space or add the log
 drain to itself. You'll amplify the logs and impact cloud.gov's loggregator.
 
-    $ app_name=logstack
-    $ space=production
-    $ logstash_url=https://${logstash_user}:${logstash_password}@${logstash_route}
-    $ cd $(mktemp -d)  # cd to a tempdir to avoid cf push picking up our manifest https://github.com/cloudfoundry/cf-drain-cli/issues/28
-    $ cf drain-space --drain-name ${app_name}-space-drain-${space} ${logstash_url}
+    app_name=logstack
+    space=production
+    logstash_url=https://${logstash_user}:${logstash_password}@${logstash_route}
+    cd $(mktemp -d)  # cd to a tempdir to avoid cf push picking up our manifest https://github.com/cloudfoundry/cf-drain-cli/issues/28
+    cf drain-space --drain-name ${app_name}-space-drain-${space} ${logstash_url}
 
-_Note: we include the space name in the drain name to work around
-https://github.com/cloudfoundry/cf-drain-cli/issues/27._
+_Note: we include the space name in the drain name to work around [this issue](https://github.com/cloudfoundry/cf-drain-cli/issues/27)._
 
 After a short delay, logs should begin to flow automatically.
-
 
 ### Elasticsearch
 
 - [Elasticsearch 7.4 docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index.html)
 
-
 ## Setup
 
 Set your application name.
 
-    $ app_name=logstack
+    app_name=logstack
 
 Copy `vars.example.yml` to `vars.yml` (or a space-specific version) and
 customize for your application.
 
 Create an Elasticsearch instance.
 
-    $ cf create-service aws-elasticsearch es-medium ${app_name}-elasticsearch
+    cf create-service aws-elasticsearch es-medium ${app_name}-elasticsearch
 
 Create a user provided service for [secrets](#secrets).
 
 Push the applications.
 
-    $ cf push --manifest manifest.yml --vars-file vars.yml
-
+    cf push --manifest manifest.yml --vars-file vars.yml
 
 ## Secrets
 
@@ -71,7 +65,6 @@ Name | Description | Where to find?
 LOGSTASH_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
 LOGSTASH_USER | Username for basic authentication on the Logstash proxy | randomly generated
 
-
 ## Applications
 
 The logstack application is made up of several smaller Cloud Foundry
@@ -82,18 +75,15 @@ Name | Description
 logstack-logstash | Logstash process that aggregates and parses log data.
 logstack-space-drain | Space drain monitors the CF space, binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 
-
 ## Development
 
 Run tests.
 
-    $ docker-compose run --rm test
-
+    docker-compose run --rm test
 
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for additional information.
-
 
 ## Public domain
 
