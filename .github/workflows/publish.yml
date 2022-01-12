@@ -19,15 +19,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: publish catalog.data.gov
+      - name: publish logstack image
         uses: docker/build-push-action@v2
         env:
           TAG: ${{ github.ref_name }}
         with:
           context: logstash
           push: true
-          tags: ghcr.io/gsa/datagov-logstash
-          labels: ${{ env.TAG }}, latest
+          tags: ghcr.io/gsa/datagov-logstash:${{ env.TAG }}
+          labels: latest
   
   create-cloudgov-services-management-staging:
     name: create services (management-staging)
@@ -58,7 +58,7 @@ jobs:
       - name: deploy-logstash
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf push logstack-logstash --vars-file vars.management-staging.yml --strategy rolling
+          command: cf push --vars-file vars.management-staging.yml --strategy rolling
           cf_org: gsa-datagov
           cf_space: management-staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -97,7 +97,7 @@ jobs:
       - name: deploy-logstash
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf push catalog --vars-file vars.management.yml --strategy rolling
+          command: cf push --vars-file vars.management.yml --strategy rolling
           cf_org: gsa-datagov
           cf_space: management
           cf_username: ${{secrets.CF_SERVICE_USER}}
