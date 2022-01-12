@@ -5,7 +5,7 @@ applications:
     image: ghcr.io/gsa/datagov-logstash:latest
   env:
     APP_NAME: ((app_name))
-    _JAVA_OPTIONS: ((logstash_java_options))
+    LS_JAVA_OPTS: ((logstash_java_options))
   health-check-type: process
   instances: ((logstash_instances))
   memory: ((logstash_memory))M
