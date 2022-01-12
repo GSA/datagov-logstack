@@ -36,7 +36,7 @@ cat > manifest.yml << EOF
 ---
 applications:
 - name: ${prefix}-space-drain
-  instances: 2
+  instances: 1
   memory: 64M
   no-route: true
 EOF
