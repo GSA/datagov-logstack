@@ -2,7 +2,7 @@
 app_name: logstack
 
 logstash_java_options: -Xms512m -Xmx512m
-logstash_instances: 1
+logstash_instances: 2
 logstash_memory: 1024
 logstash_routes:
   # TODO can this be an internal route? https://github.com/GSA/datagov-deploy/issues/2945
