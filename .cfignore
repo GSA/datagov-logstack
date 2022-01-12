@@ -1,0 +1,4 @@
+.git*
+.pytest_cache
+localstack.d
+test
