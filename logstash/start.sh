@@ -19,6 +19,7 @@ function parse_vcap_services () {
   export AWS_SECRET_ACCESS_KEY=$(vcap_get_service secret_access_key)
   export AWS_REGION=$(vcap_get_service region)
   export AWS_BUCKET=$(vcap_get_service bucket)
+  export AWS_ENDPOINT="https://$(vcap_get_service endpoint)"
   export LOGSTASH_PASSWORD=$(vcap_get_service LOGSTASH_PASSWORD)
   export LOGSTASH_USER=$(vcap_get_service LOGSTASH_USER)
 }
