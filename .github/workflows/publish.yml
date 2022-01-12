@@ -106,3 +106,20 @@ jobs:
         run: |
           sleep 20  # Logstash is very slow to start up
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
+      - name: drain-staging-space
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: ./create-space-drain.sh
+          cf_org: gsa-datagov
+          cf_space: staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+      - name: drain-prod-space
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: ./create-space-drain.sh
+          cf_org: gsa-datagov
+          cf_space: prod
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+
