@@ -26,8 +26,8 @@ jobs:
         with:
           context: logstash
           push: true
-          tags: ghcr.io/gsa/datagov-logstash
-          labels: ${{ env.TAG }}, latest
+          tags: ghcr.io/gsa/datagov-logstash:${{ env.TAG }}
+          labels: latest
   
   create-cloudgov-services-management-staging:
     name: create services (management-staging)
