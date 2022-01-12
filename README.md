@@ -2,32 +2,33 @@
 
 Drain logs from cloud.gov into your custom logging solution
 
+## Prerequisites
+
+For deployment
+
+- [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) (tested with v8)
+- [cf-drains-cli plugin](https://github.com/cloudfoundry/cf-drain-cli) (tested with v2.0.0)
+- [jq](https://stedolan.github.io/jq/) (tested with 1.6)
+
+For development, add 
+
+- [Docker](https://www.docker.com/) (tested with Docker Engine v20.10.10)
+- [Python](https://www.python.org/) (tested with v3.8)
+
 ## Usage
 
 ### Log drains
 
 Use the [drain
-plugin](https://github.com/cloudfoundry/cf-drain-cli#drain-all-apps-in-a-space)
-to configure the log drain for all apps in a space. Alternatively, you can
-configure the drain per-application following the [Cloud Foundry
-documentation](https://docs.cloudfoundry.org/devguide/services/log-management.html).
+plugin](https://github.com/cloudfoundry/cf-drain-cli#create-drain) to configure
+the log drain for each app in a space.
 
-Create a logdrain for you applications using the drains plugin within each
-space. For the drain URL, this should match the HTTPS route you assigned to
-Logstash (`logstash_routes`) and include the basic authentication credentials in
-your user-provided service (see [secrets](#secrets)). _Note: creating
-a space-wide drain may require org admin permissions in Cloud Foundry._
+    cf drain <app-name> https://<username>:<password>@<drain-app-route>
 
-**Warning:** Do not add a space drain to the logstack-logstash's space or add the log
-drain to itself. You'll amplify the logs and impact cloud.gov's loggregator.
+Alternatively, you can auto-drain all apps in a given space by targeting that space, then running the `./create-space-drain.sh` script.
 
-    app_name=logstack
-    space=production
-    logstash_url=https://${logstash_user}:${logstash_password}@${logstash_route}
-    cd $(mktemp -d)  # cd to a tempdir to avoid cf push picking up our manifest https://github.com/cloudfoundry/cf-drain-cli/issues/28
-    cf drain-space --drain-name ${app_name}-space-drain-${space} ${logstash_url}
-
-_Note: we include the space name in the drain name to work around [this issue](https://github.com/cloudfoundry/cf-drain-cli/issues/27)._
+    cf target -s prod
+    ./create-space-drain.sh
 
 After a short delay, logs should begin to flow automatically.
 
@@ -69,7 +70,9 @@ applications.
 Name | Description
 ---- | -----------
 logstack-logstash | Logstash process that aggregates and parses log data.
-logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
+logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli). 
+
+_Note: The logstack-space-drain application consumes 64MB._
 
 ## Development
 
