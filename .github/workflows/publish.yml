@@ -123,7 +123,7 @@ jobs:
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
 
-  deploy-drain-prod:
+  drain-apps-in-prod:
     name: create drains (prod)
     environment: production
     runs-on: ubuntu-latest
