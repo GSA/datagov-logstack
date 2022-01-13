@@ -108,7 +108,7 @@ jobs:
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
 
   drain-apps-in-staging:
-    name: create drains (staging)
+    name: drain everything in staging space
     environment: staging
     runs-on: ubuntu-latest
     needs:
