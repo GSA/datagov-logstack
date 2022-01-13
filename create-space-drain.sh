@@ -11,7 +11,7 @@ set -o pipefail
 # drain_name:  the name of the drain app
 # prefix:      prefix for the space-drain app that will be deployed
 
-drain_space{$1:-management}
+drain_space=${1:-management}
 drain_name=${2:-logstack-logstash}
 prefix=${3:-logstack}
 
