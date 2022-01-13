@@ -114,10 +114,20 @@ jobs:
     needs:
       - deploy-management
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Install Dependency
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: cf install-plugin -r CF-Community "drains" -f
+          cf_org: gsa-datagov
+          cf_space: staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -130,10 +140,20 @@ jobs:
     needs:
       - deploy-management
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Install Dependency
+        uses: cloud-gov/cg-cli-tools@cli-v8
+        with:
+          command: cf install-plugin -r CF-Community "drains" -f
+          cf_org: gsa-datagov
+          cf_space: prod
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
-          command: cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: prod
           cf_username: ${{secrets.CF_SERVICE_USER}}
