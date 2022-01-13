@@ -22,9 +22,9 @@ space=$(cf target | grep space: | cut -d : -f 2 | sed s/\ //g)
 
 # Grab the credentials and route from the management space, then switch back
 cf t -s ${drain_space} > /dev/null 2>&1
-drain_user=$(     cf env ${drain_app} | grep LOGSTASH_USER     | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
-drain_password=$( cf env ${drain_app} | grep LOGSTASH_PASSWORD | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
-drain_route=$(    cf env ${drain_app} | sed -n -e "/VCAP_APPLICATION/,\$p" | sed -e "/User-Provided:/,\$d" | sed 's/VCAP_APPLICATION: //g' | jq .application_uris[0] | sed 's/"//g' )
+drain_user=$(     cf env ${drain_name} | grep LOGSTASH_USER     | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_password=$( cf env ${drain_name} | grep LOGSTASH_PASSWORD | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_route=$(    cf env ${drain_name} | sed -n -e "/VCAP_APPLICATION/,\$p" | sed -e "/User-Provided:/,\$d" | sed 's/VCAP_APPLICATION: //g' | jq .application_uris[0] | sed 's/"//g' )
 cf t -s ${space} > /dev/null 2>&1
 
 # Assemble the URL for the drain
