@@ -107,7 +107,7 @@ jobs:
           sleep 20  # Logstash is very slow to start up
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
 
-  deploy-drain-staging:
+  drain-apps-in-staging:
     name: create drains (staging)
     environment: staging
     runs-on: ubuntu-latest
