@@ -114,6 +114,8 @@ jobs:
     needs:
       - deploy-management
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
@@ -130,6 +132,8 @@ jobs:
     needs:
       - deploy-management
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
