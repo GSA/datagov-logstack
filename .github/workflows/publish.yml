@@ -117,7 +117,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: Install Dependencies
-        run: apt-get install jq
+        run: sudo apt-get install -y jq
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
@@ -137,7 +137,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: Install Dependencies
-        run: apt-get install jq
+        run: sudo apt-get install -y jq
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@cli-v8
         with:
