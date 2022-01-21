@@ -1,9 +1,15 @@
 ---
+# Name prefix for applications in the logstack.
 app_name: logstack
 
+# Options to pass the JVM
 logstash_java_options: -Xms512m -Xmx512m
+# Number of instances of the Logstash to run.
 logstash_instances: 2
+# Amount of memory to provide to the Logstash (Java) application.
 logstash_memory: 1024
-logstash_routes:
-  # TODO can this be an internal route? https://github.com/GSA/datagov-deploy/issues/2945
-  - route: logstash-prod-datagov.app.cloud.gov
+# Assign route for the log shipper. This will be used as the logdrain for other
+# Cloud Foundry applications.
+hostname: logstash-prod-datagov
+domain: app.cloud.gov
+https_proxy:

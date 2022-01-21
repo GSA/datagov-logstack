@@ -1,0 +1,10 @@
+#!/bin/bash 
+
+
+# Create an offline plugins pack, which can then be configured with
+# `logstash-plugin install file://<pathto>/plugins.zip`
+logstash-plugin prepare-offline-pack --overwrite --output logstash/plugins.zip \
+    logstash-input-heartbeat \
+    logstash-input-http \
+    logstash-filter-mutate \
+    logstash-output-s3

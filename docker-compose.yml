@@ -47,8 +47,8 @@ services:
       AWS_REGION: us-east-1
       AWS_BUCKET: logstash-bucket
       AWS_ENDPOINT: http://localstack:4566
-      LOGSTASH_USER: logstash
-      LOGSTASH_PASSWORD: logstash
+      DRAIN_USER: logstash
+      DRAIN_PASSWORD: logstash
     ports:
       - "5044:5044"
       - "9600:9600"

@@ -55,12 +55,12 @@ Push the applications.
 
 Provide secrets for the logstack applications via a [user-provided service](https://docs.cloudfoundry.org/devguide/services/user-provided.html).
 
-    cf cups ${app_name}-secrets -p LOGSTASH_USER,LOGSTASH_PASSWORD
+    cf cups ${app_name}-secrets -p DRAIN_USER,DRAIN_PASSWORD
 
 Name | Description | Where to find?
 ---- | ----------- | --------------
-LOGSTASH_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
-LOGSTASH_USER | Username for basic authentication on the Logstash proxy | randomly generated
+DRAIN_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
+DRAIN_USER | Username for basic authentication on the Logstash proxy | randomly generated
 
 ## Applications
 

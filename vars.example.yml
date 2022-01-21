@@ -3,11 +3,13 @@
 app_name: logstack
 
 # Options to pass the JVM
-logstash_java_options: -Xms256m -Xmx512m
+logstash_java_options: -Xms512m -Xmx512m
 # Number of instances of the Logstash to run.
 logstash_instances: 1
 # Amount of memory to provide to the Logstash (Java) application.
-logstash_memory: 576
-# Assign routes for Logstash. This will be used as the logdrain for other Cloud Foundry applications.
-logstash_routes:
-  - route: logstash-stage-datagov.app.cloud.gov
+logstash_memory: 1024
+# Assign route for the log shipper. This will be used as the logdrain for other
+# Cloud Foundry applications.
+hostname: my-logdrain
+domain: app.cloud.gov
+https_proxy:

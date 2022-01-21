@@ -18,20 +18,23 @@ prefix=${3:-logstack}
 # If the app already exists, exit early/successfully
 cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
 
+# If the drain plugin isn't already installed, we can't proceed!
+cf drains --help > /dev/null 2>&1 || ( printf "cf_drain_cli plugin not found!\nInstall it with:\n    cf install-plugin -r CF-Community drains\n\n" && exit 1 )
+
 space=$(cf target | grep space: | cut -d : -f 2 | sed s/\ //g)
 
 # Grab the credentials and route from the management space, then switch back
-cf t -s ${drain_space} > /dev/null 2>&1
-drain_user=$(     cf env ${drain_name} | grep LOGSTASH_USER     | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
-drain_password=$( cf env ${drain_name} | grep LOGSTASH_PASSWORD | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
-drain_route=$(    cf env ${drain_name} | sed -n -e "/VCAP_APPLICATION/,\$p" | sed -e "/User-Provided:/,\$d" | sed 's/VCAP_APPLICATION: //g' | jq .application_uris[0] | sed 's/"//g' )
-cf t -s ${space} > /dev/null 2>&1
+cf t -s "$drain_space" > /dev/null 2>&1
+drain_user=$(     cf env "$drain_name" | grep DRAIN_USER     | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_password=$( cf env "$drain_name" | grep DRAIN_PASSWORD | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_route=$(    cf env "$drain_name" | sed -n -e "/VCAP_APPLICATION/,\$p" | sed -e "/User-Provided:/,\$d" | sed 's/VCAP_APPLICATION: //g' | jq .application_uris[0] | sed 's/"//g' )
+cf t -s "$space" > /dev/null 2>&1
 
 # Assemble the URL for the drain
 drain_url=https://${drain_user}:${drain_password}@${drain_route}
 
 # Push out the app that auto-binds apps to the drain
-cd $(mktemp -d)
+cd "$(mktemp -d)"
 cat > manifest.yml << EOF
 ---
 applications:
@@ -41,4 +44,4 @@ applications:
   no-route: true
 EOF
 
-cf drain-space --drain-name ${prefix}-space-drain ${drain_url}
+cf drain-space --drain-name "${prefix}-space-drain" "$drain_url"
