@@ -13,3 +13,7 @@ logstash_memory: 1024
 hostname: my-logdrain
 domain: app.cloud.gov
 https_proxy:
+
+# Optional license key for delivering logs to New Relic
+# See https://github.com/newrelic/logstash-output-plugin
+logstash_newrelic_license_key: 

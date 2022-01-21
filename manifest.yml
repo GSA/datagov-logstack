@@ -18,3 +18,5 @@ applications:
   services:
     - ((app_name))-s3
     - ((app_name))-secrets
+env:
+  NEWRELIC_LICENSE_KEY: ((logstash_newrelic_license_key))
