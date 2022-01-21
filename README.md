@@ -1,4 +1,4 @@
-# datagov-logstack
+# cg-logstack
 
 Drain logs from cloud.gov into your custom logging solution
 
