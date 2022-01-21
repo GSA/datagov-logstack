@@ -31,5 +31,15 @@ export LS_HOME="$HOME/logstash-7.16.3"
 echo "Installing logstash plugins..."
 "$LS_HOME"/bin/logstash-plugin install file://"$HOME"/plugins.zip
 
+echo "Installing Cloud Foundry root CA certificate..."
+cp "$LS_HOME"/jdk/lib/security/cacerts "$LS_HOME"/jdk/lib/security/jssecacerts
+for cert in "$CF_SYSTEM_CERT_PATH"/* ; do 
+    echo "Installing certificates: $cert"
+    # We haven't ever seen someone change this default password, and anyone who
+    # can see this already has permission to update these files, so we're not
+    # setting anything more complicated to avoid complications down the line.
+    "$LS_HOME"/jdk/bin/keytool -noprompt -import -trustcacerts -file "$cert" -storepass changeit -alias "${cert/$CF_SYSTEM_CERT_PATH\//}" -keystore "$LS_HOME"/jdk/lib/security/jssecacerts
+done
+
 ln -s "$LS_HOME"/bin/logstash "$HOME"/bin/logstash || true
 

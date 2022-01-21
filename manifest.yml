@@ -4,6 +4,7 @@ applications:
   env:
     APP_NAME: ((app_name))
     LS_JAVA_OPTS: ((logstash_java_options))
+    https_proxy: ((https_proxy))
   buildpacks:
     - binary_buildpack
   health-check-type: process
