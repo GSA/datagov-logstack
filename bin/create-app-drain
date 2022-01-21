@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+# set -x
+set -o pipefail
+
+# Usage: Run this in the space where there's an app whose logs you want drained.
+#   ./create-app-drain.sh app_name [drain_space [drain_name ]]
+#
+# Options:
+# app_name
+# drain_space: the space where the actual drain app is running
+# drain_name:  the name of the drain app
+
+app_name="$1"
+drain_space="${2:-management}"
+drain_name="${3:-logstack-shipper}"
+
+# If the drain plugin isn't already installed, we can't proceed!
+cf drains --help > /dev/null 2>&1 || ( printf "cf_drain_cli plugin not found!\nInstall it with:\n    cf install-plugin -r CF-Community drains\n\n" && exit 1 )
+
+space=$( cf target | grep space: | cut -d : -f 2 | sed 's/\ //g' )
+
+# Grab the credentials and route from the management space, then switch back
+cf t -s "$drain_space" > /dev/null 2>&1
+drain_user=$(     cf env "$drain_name" | grep DRAIN_USER     | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_password=$( cf env "$drain_name" | grep DRAIN_PASSWORD | cut -d : -f 2 | sed 's/,$//g' | sed 's#[\ "]##g' )
+drain_route=$(    cf env "$drain_name" | sed -n -e "/VCAP_APPLICATION/,\$p" | sed -e "/User-Provided:/,\$d" | sed 's/VCAP_APPLICATION: //g' | jq .application_uris[0] | sed 's/"//g' )
+cf t -s "$space" > /dev/null 2>&1
+
+# Assemble the URL for the drain
+drain_url=https://${drain_user}:${drain_password}@${drain_route}
+
+drain_name="$space"-drain
+cf service "$drain_name" > /dev/null 2>&1 || 
+    cf create-user-provided-service "$drain_name" -l "$drain_url" 
+cf bind-service "$app_name" "$drain_name"
+
