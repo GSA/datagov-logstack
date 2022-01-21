@@ -1,0 +1,10 @@
+#/bin/bash
+
+echo "Installing AWS CLI..."
+mkdir "$HOME"/aws-cli
+unzip awscliv2.zip > /dev/null 2>&1 && rm awscliv2.zip && (cd aws && ./install -i ~/aws-cli -b ~/bin) && rm -fr aws || true
+for cert in "$CF_SYSTEM_CERT_PATH"/* ; do 
+    cat $cert >> aws-cli/v2/2.4.13/dist/awscli/botocore/cacert.pem
+done
+
+
