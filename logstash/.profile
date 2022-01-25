@@ -1,25 +1,17 @@
 #!/bin/bash
 
-function vcap_get_service () {
-  local field
-  field="$1"
-
-  echo "$VCAP_SERVICES" | grep -Po "\"${field}\":\\s\"\\K(.*?)(?=\")"
-}
-
 function parse_vcap_services () {
   if [[ -z "$VCAP_SERVICES" ]]; then
     return 0
   fi
-
-  export AWS_ACCESS_KEY_ID=$(vcap_get_service access_key_id)
-  export AWS_SECRET_ACCESS_KEY=$(vcap_get_service secret_access_key)
-  export AWS_REGION=$(vcap_get_service region)
-  export AWS_BUCKET=$(vcap_get_service bucket)
-  export AWS_ENDPOINT="https://$(vcap_get_service endpoint)"
+  export DRAIN_USER=$(              echo "$VCAP_SERVICES" | jq -r '."user-provided"[0].credentials.DRAIN_USER')
+  export DRAIN_PASSWORD=$(          echo "$VCAP_SERVICES" | jq -r '."user-provided"[0].credentials.DRAIN_PASSWORD')
+  export AWS_ACCESS_KEY_ID=$(       echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.access_key_id")
+  export AWS_SECRET_ACCESS_KEY=$(   echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.secret_access_key")
+  export AWS_REGION=$(              echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.region")
+  export AWS_BUCKET=$(              echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.bucket")
+  export AWS_ENDPOINT="https://$(   echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.endpoint")"
   export AWS_S3_PROXY="$https_proxy"
-  export DRAIN_PASSWORD=$(vcap_get_service DRAIN_PASSWORD)
-  export DRAIN_USER=$(vcap_get_service DRAIN_USER)
 }
 
 parse_vcap_services
