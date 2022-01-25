@@ -36,11 +36,14 @@ services:
       localstack:
         condition: service_healthy
     healthcheck:
-      test: bin/logstash -t
-      interval: 60s
-      timeout: 50s
-      retries: 5
-    build: logstash
+      test: "${DOCKER_HEALTHCHECK_TEST:-/usr/bin/curl --fail http://logstash:logstash@localhost:8080 || exit 1}"
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 20
+    build:
+      dockerfile: $PWD/Dockerfile 
+      context: logstash
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -49,10 +52,10 @@ services:
       AWS_ENDPOINT: http://localstack:4566
       DRAIN_USER: logstash
       DRAIN_PASSWORD: logstash
+      PORT: 8080
     ports:
-      - "5044:5044"
-      - "9600:9600"
-      - "9700:9700"
+      - 8080:8080
+      - 9600:9600
 
   test:
     build:

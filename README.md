@@ -69,7 +69,7 @@ applications.
 
 Name | Description
 ---- | -----------
-logstack-logstash | Logstash process that aggregates and parses log data.
+logstack-shipper | Logstash process that aggregates and parses log data.
 logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli). 
 
 _Note: The logstack-space-drain application consumes 64MB._
@@ -78,7 +78,7 @@ _Note: The logstack-space-drain application consumes 64MB._
 
 Run tests.
 
-    docker-compose run --rm test
+    docker compose run --rm test
 
 ## Contributing
 
