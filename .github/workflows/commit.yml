@@ -13,8 +13,8 @@ jobs:
         uses: actions/checkout@v2
       - name: test
         run: |
-          docker compose up -d &
-          sleep 400
+          docker compose up logstash &
+          sleep 350
           docker ps -a
           docker inspect --format='{{json .State.Health}}' datagov-logstack-logstash-1
           netstat -tuplen
