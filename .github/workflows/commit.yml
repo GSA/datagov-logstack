@@ -14,7 +14,6 @@ jobs:
       - name: test
         run: |
           docker compose up logstash &
-          sleep 350
-          docker ps -a
-          docker inspect --format='{{json .State.Health}}' datagov-logstack-logstash-1
-          netstat -tuplen
+          sleep 120
+          docker exec datagov-logstack-logstash-1 pwd
+          docker exec datagov-logstack-logstash-1 ls -R
