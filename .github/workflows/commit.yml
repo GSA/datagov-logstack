@@ -12,4 +12,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: test
-        run: docker compose run --rm test
+        run: |
+          chmod -R 777 logstash
+          PWD=`pwd` make logstash-installation
+          docker compose run --rm test
