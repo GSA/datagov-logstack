@@ -15,5 +15,5 @@ jobs:
         run: |
           docker compose up -d &
           sleep 160
-          docker inspect --format='{{json .State.Health}}' datagov-logstack_logstash_1
+          docker inspect --format='{{json .State.Health}}' datagov-logstack-logstash-1
           netstat -tuplen
