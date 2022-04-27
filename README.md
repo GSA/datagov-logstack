@@ -10,7 +10,7 @@ For deployment
 - [cf-drains-cli plugin](https://github.com/cloudfoundry/cf-drain-cli) (tested with v2.0.0)
 - [jq](https://stedolan.github.io/jq/) (tested with 1.6)
 
-For development, add 
+For development, add
 
 - [Docker](https://www.docker.com/) (tested with Docker Engine v20.10.10)
 - [Python](https://www.python.org/) (tested with v3.8)
@@ -70,7 +70,7 @@ applications.
 Name | Description
 ---- | -----------
 logstack-shipper | Logstash process that aggregates and parses log data.
-logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli). 
+logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 
 _Note: The logstack-space-drain application consumes 64MB._
 
