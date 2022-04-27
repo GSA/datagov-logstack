@@ -13,5 +13,5 @@ jobs:
         uses: actions/checkout@v2
       - name: test
         run: |
-          docker run --rm  datagov-logstack-logstash-1 pwd
-          docker run --rm  datagov-logstack-logstash-1 ls -R
+          docker compose  run --rm  logstash pwd
+          docker compose  run --rm  logstash ls -R
