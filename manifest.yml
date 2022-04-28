@@ -1,17 +1,22 @@
 ---
 applications:
-- name: ((app_name))-logstash
-  docker:
-    image: ghcr.io/gsa/datagov-logstash:latest
+- name: ((app_name))-shipper
   env:
     APP_NAME: ((app_name))
     LS_JAVA_OPTS: ((logstash_java_options))
+    https_proxy: ((https_proxy))
+  buildpacks:
+    - binary_buildpack
   health-check-type: process
   instances: ((logstash_instances))
   memory: ((logstash_memory))M
+  disk_quota: 2G
   path: logstash
-  command: /usr/share/logstash/bin/start.sh
-  routes: ((logstash_routes))
+  command: ./start.sh
+  routes: 
+    - route: ((hostname)).((domain))
   services:
     - ((app_name))-s3
     - ((app_name))-secrets
+env:
+  NEWRELIC_LICENSE_KEY: ((logstash_newrelic_license_key))

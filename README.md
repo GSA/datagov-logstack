@@ -1,4 +1,4 @@
-# datagov-logstack
+# cg-logstack
 
 Drain logs from cloud.gov into your custom logging solution
 
@@ -10,7 +10,7 @@ For deployment
 - [cf-drains-cli plugin](https://github.com/cloudfoundry/cf-drain-cli) (tested with v2.0.0)
 - [jq](https://stedolan.github.io/jq/) (tested with 1.6)
 
-For development, add 
+For development, add
 
 - [Docker](https://www.docker.com/) (tested with Docker Engine v20.10.10)
 - [Python](https://www.python.org/) (tested with v3.8)
@@ -55,12 +55,12 @@ Push the applications.
 
 Provide secrets for the logstack applications via a [user-provided service](https://docs.cloudfoundry.org/devguide/services/user-provided.html).
 
-    cf cups ${app_name}-secrets -p LOGSTASH_USER,LOGSTASH_PASSWORD
+    cf cups ${app_name}-secrets -p DRAIN_USER,DRAIN_PASSWORD
 
 Name | Description | Where to find?
 ---- | ----------- | --------------
-LOGSTASH_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
-LOGSTASH_USER | Username for basic authentication on the Logstash proxy | randomly generated
+DRAIN_PASSWORD | Password for basic authentication on the Logstash proxy | randomly generated
+DRAIN_USER | Username for basic authentication on the Logstash proxy | randomly generated
 
 ## Applications
 
@@ -69,8 +69,8 @@ applications.
 
 Name | Description
 ---- | -----------
-logstack-logstash | Logstash process that aggregates and parses log data.
-logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli). 
+logstack-shipper | Logstash process that aggregates and parses log data.
+logstack-space-drain | Space drain monitors a CF space, and binds the log drain to applications. Created by the [drains plugin](https://github.com/cloudfoundry/cf-drain-cli).
 
 _Note: The logstack-space-drain application consumes 64MB._
 
@@ -78,7 +78,7 @@ _Note: The logstack-space-drain application consumes 64MB._
 
 Run tests.
 
-    docker-compose run --rm test
+    docker compose run --rm test
 
 ## Contributing
 

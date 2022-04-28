@@ -1,9 +1,19 @@
 ---
+# Name prefix for applications in the logstack.
 app_name: logstack
 
+# Options to pass the JVM
 logstash_java_options: -Xms512m -Xmx512m
+# Number of instances of the Logstash to run.
 logstash_instances: 1
+# Amount of memory to provide to the Logstash (Java) application.
 logstash_memory: 1024
-logstash_routes:
-  # TODO can this be an internal route? https://github.com/GSA/datagov-deploy/issues/2945
-  - route: logstash-stage-datagov.app.cloud.gov
+# Assign route for the log shipper. This will be used as the logdrain for other
+# Cloud Foundry applications.
+hostname: logstash-stage-datagov
+domain: app.cloud.gov
+https_proxy:
+
+# Optional license key for delivering logs to New Relic
+# See https://github.com/newrelic/logstash-output-plugin
+logstash_newrelic_license_key: 
