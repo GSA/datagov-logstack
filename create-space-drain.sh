@@ -12,7 +12,7 @@ set -o pipefail
 # prefix:      prefix for the space-drain app that will be deployed
 
 drain_space=${1:-management}
-drain_name=${2:-logstack-logstash}
+drain_name=${2:-logstack-shipper}
 prefix=${3:-logstack}
 
 # If the app already exists, exit early/successfully
