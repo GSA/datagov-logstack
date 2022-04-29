@@ -10,7 +10,7 @@ app_name=${1:-logstack}
 space=$(cf target | grep space | cut -d : -f 2 | xargs)
 
 # A function to generate a random quote-safe password
-randpw(){ < openssl rand -base64 40 | tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo; }
+randpw(){ openssl rand -base64 40 | tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo; }
 
 # Only create stuff in production and staging spaces
 if [ "$space" = "management" ] || [ "$space" = "management-staging" ]; then
