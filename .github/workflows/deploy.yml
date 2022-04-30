@@ -102,12 +102,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: sudo apt-get install -y jq
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: sudo apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -122,12 +120,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: sudo apt-get install -y jq
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: sudo apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: prod
           cf_username: ${{secrets.CF_SERVICE_USER}}
