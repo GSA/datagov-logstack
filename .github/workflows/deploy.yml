@@ -105,7 +105,7 @@ jobs:
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: sudo apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -123,7 +123,7 @@ jobs:
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: sudo apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
+          command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: prod
           cf_username: ${{secrets.CF_SERVICE_USER}}
