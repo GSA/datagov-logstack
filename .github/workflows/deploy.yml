@@ -97,19 +97,18 @@ jobs:
     name: drain everything in staging space
     environment: management
     runs-on: ubuntu-latest
-    needs:
-      - deploy-management
+    # needs:
+    #   - deploy-management
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: |
-            apt-get install -y jq
-            cf install-plugin -f -r CF-Community "drains"
-            mkdir -p /root/.cf/
-            touch /root/.cf/config.json
+          command: apt-get install -y jq && \
+            cf install-plugin -f -r CF-Community "drains" && \
+            mkdir -p /root/.cf/ && \
+            touch /root/.cf/config.json && \
             ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: staging
@@ -120,19 +119,18 @@ jobs:
     name: drain everything in prod space
     environment: management
     runs-on: ubuntu-latest
-    needs:
-      - deploy-management
+    # needs:
+    #   - deploy-management
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: |
-            apt-get install -y jq
-            cf install-plugin -f -r CF-Community "drains"
-            mkdir -p /root/.cf/
-            touch /root/.cf/config.json
+          command: apt-get install -y jq && \
+            cf install-plugin -f -r CF-Community "drains" && \
+            mkdir -p /root/.cf/ && \
+            touch /root/.cf/config.json && \
             ./create-space-drain.sh
           cf_org: gsa-datagov
           cf_space: prod
