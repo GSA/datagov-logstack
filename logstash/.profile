@@ -17,9 +17,9 @@ function parse_vcap_services () {
 parse_vcap_services
 
 echo "Unpacking logstash..."
-    tar xzvf logstash-oss-7.16.3-linux-x86_64.tar.gz > /dev/null 2>&1 && \
-    rm logstash-oss-7.16.3-linux-x86_64.tar.gz
-export LS_HOME="$PWD/logstash-7.16.3"
+    tar xzvf logstash-7.17.3-linux-x86_64.tar.gz > /dev/null 2>&1 && \
+    rm logstash-7.17.3-linux-x86_64.tar.gz
+export LS_HOME="$PWD/logstash-7.17.3"
 
 echo "Installing logstash plugins..."
 "$LS_HOME"/bin/logstash-plugin install file://"$PWD"/plugins.zip
