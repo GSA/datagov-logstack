@@ -11,7 +11,7 @@ function parse_vcap_services () {
   export AWS_REGION=$(              echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.region")
   export AWS_BUCKET=$(              echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.bucket")
   export AWS_ENDPOINT="https://$(   echo "$VCAP_SERVICES" | jq -r ".s3[0].credentials.endpoint")"
-  export AWS_S3_PROXY="$https_proxy"
+  [[ -z "${https_proxy}" ]] && unset AWS_S3_PROXY || export AWS_S3_PROXY="${https_proxy}"
 }
 
 parse_vcap_services
