@@ -13,7 +13,7 @@ space=$(cf target | grep space | cut -d : -f 2 | xargs)
 randpw(){ openssl rand -base64 40 | tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo; }
 
 # Only create stuff in production and staging spaces
-if [ "$space" = "management" ] || [ "$space" = "management-staging" ]; then
+if [ "$space" = "management" ] || [ "$space" = "management-staging" ] || [ "$space" = "development-ssb" ]; then
     cf service "${app_name}-s3"      > /dev/null 2>&1 || cf create-service s3 basic "${app_name}-s3" --wait&
     cf service "${app_name}-secrets" > /dev/null 2>&1 || 
         cf create-user-provided-service "${app_name}-secrets" -p '{"DRAIN_USER":"'$(randpw)'","DRAIN_PASSWORD":"'$(randpw)'"}' &
