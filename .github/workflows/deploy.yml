@@ -144,7 +144,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: drain-staging-space
+      - name: drain-development-space
         uses: cloud-gov/cg-cli-tools@main
         with:
           command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && mkdir -p /root/.cf/ && touch /root/.cf/config.json && ./create-space-drain.sh
