@@ -7,7 +7,7 @@ Drain logs from cloud.gov into your custom logging solution
 For deployment
 
 - [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) (tested with v8)
-- [cf-drains-cli plugin](https://github.com/cloudfoundry/cf-drain-cli) (tested with v2.0.0)
+- [cf-drains-cli plugin](https://github.com/cloudfoundry/cf-drain-cli) (tested with v2.0.0) (Deprecated, please install from binary release)
 - [jq](https://stedolan.github.io/jq/) (tested with 1.6)
 
 For development, add
