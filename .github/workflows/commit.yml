@@ -15,4 +15,4 @@ jobs:
         run: |
           chmod -R 777 logstash
           PWD=`pwd` make logstash-installation
-          docker compose run --rm localstack
+          docker compose run --rm test
