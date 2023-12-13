@@ -4,7 +4,7 @@
 services:
   localstack:
     container_name: "localstack"
-    image: localstack/localstack:1.2.0
+    image: localstack/localstack
     healthcheck:
       test:
         - CMD
@@ -15,21 +15,14 @@ services:
       timeout: 10s
       start_period: 10s
     ports:
-      - "127.0.0.1:4566:4566"
-      - "127.0.0.1:4571:4571"
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
     environment:
-      - SERVICES=${SERVICES-}
       - DEBUG=${DEBUG-}
-      - DATA_DIR=${DATA_DIR-}
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
-      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_DEFAULT_REGION=us-east-1
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - ./localstack.d:/docker-entrypoint-initaws.d
-  
  
   logstash:
     depends_on:
