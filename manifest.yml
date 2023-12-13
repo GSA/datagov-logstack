@@ -5,6 +5,8 @@ applications:
     APP_NAME: ((app_name))
     LS_JAVA_OPTS: ((logstash_java_options))
     https_proxy: ((https_proxy))
+    NEWRELIC_LICENSE_KEY: ((logstash_newrelic_license_key))
+    NEWRELIC_LOG_URI: ((logstash_newrelic_log_uri))
   buildpacks:
     - binary_buildpack
   health-check-type: process
@@ -18,6 +20,3 @@ applications:
   services:
     - ((app_name))-s3
     - ((app_name))-secrets
-env:
-  NEWRELIC_LICENSE_KEY: ((logstash_newrelic_license_key))
-  NEWRELIC_LOG_URI: ((logstash_newrelic_log_uri))
