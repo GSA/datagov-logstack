@@ -1,4 +1,3 @@
 ﻿vars.yml
 logstash/logstash-oss-*-linux-x86_64.tar.gz
-logstash/plugins.zip
 logstash/awscliv2.zip
