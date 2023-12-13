@@ -147,7 +147,13 @@ jobs:
       - name: drain-development-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && mkdir -p /root/.cf/ && touch /root/.cf/config.json && ./create-space-drain.sh
+          command: |
+            apt-get install -y jq && 
+            curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
+            cf install-plugin -f -r drain-plugin && 
+            rm -f drain-plugin && 
+            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
+            ./create-space-drain.sh development-ssb
           cf_org: gsa-datagov
           cf_space: development
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -165,7 +171,13 @@ jobs:
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && mkdir -p /root/.cf/ && touch /root/.cf/config.json && ./create-space-drain.sh
+          command: |
+            apt-get install -y jq && 
+            curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
+            cf install-plugin -f -r drain-plugin && 
+            rm -f drain-plugin && 
+            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
+            ./create-space-drain.sh management-staging
           cf_org: gsa-datagov
           cf_space: staging
           cf_username: ${{secrets.CF_SERVICE_USER}}
@@ -183,7 +195,13 @@ jobs:
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@main
         with:
-          command: apt-get install -y jq && cf install-plugin -f -r CF-Community "drains" && mkdir -p /root/.cf/ && touch /root/.cf/config.json && ./create-space-drain.sh
+          command: |
+            apt-get install -y jq && 
+            curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
+            cf install-plugin -f -r drain-plugin &&
+            rm -f drain-plugin && 
+            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
+            ./create-space-drain.sh management
           cf_org: gsa-datagov
           cf_space: prod
           cf_username: ${{secrets.CF_SERVICE_USER}}
