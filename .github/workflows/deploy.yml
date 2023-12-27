@@ -72,7 +72,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - create-cloudgov-services-management
-      - deploy-management-staging
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -95,10 +94,10 @@ jobs:
 
   drain-apps-in-staging:
     name: drain everything in staging space
-    environment: management
+    environment: management-staging
     runs-on: ubuntu-latest
     needs:
-      - deploy-management
+      - deploy-management-staging
     steps:
       - name: checkout
         uses: actions/checkout@v2
