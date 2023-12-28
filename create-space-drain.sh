@@ -32,7 +32,6 @@ cf t -s "$space" > /dev/null 2>&1
 
 # Assemble the URL for the drain
 drain_url=https://${drain_user}:${drain_password}@${drain_route}
-echo $drain_url
 
 # Push out the app that auto-binds apps to the drain
 cd "$(mktemp -d)"
