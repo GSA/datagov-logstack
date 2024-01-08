@@ -16,5 +16,5 @@ https_proxy:
 
 # Optional license key for delivering logs to New Relic
 # See https://github.com/newrelic/logstash-output-plugin
-logstash_newrelic_license_key: d5cb2aa3c0e6523e95a70d50ad5fdbc4db22d9e7
+logstash_newrelic_license_key:
 logstash_newrelic_log_uri: https://gov-log-api.newrelic.com/log/v1
