@@ -9,7 +9,7 @@ on:
 
 jobs:
   create-cloudgov-services-management-staging:
-    name: create services (management-staging)
+    name:   
     environment: management-staging
     runs-on: ubuntu-latest
     steps:
@@ -106,7 +106,7 @@ jobs:
         uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
-            apt-get install -y jq && 
+            apt install -y jq && 
             curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
             cf install-plugin -f -r drain-plugin && 
             rm -f drain-plugin && 
@@ -130,7 +130,7 @@ jobs:
         uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
-            apt-get install -y jq && 
+            apt install -y jq && 
             curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
             cf install-plugin -f -r drain-plugin &&
             rm -f drain-plugin && 
