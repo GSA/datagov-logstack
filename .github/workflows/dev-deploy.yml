@@ -64,11 +64,17 @@ jobs:
         with:
           command: |
             apt install -y jq &&
+            echo "01" &&
             curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
-            cf install-plugin -f -r drain-plugin && 
+            echo "02" &&
+            cf install-plugin -f -r drain-plugin &&
+            echo "03" &&
             rm -f drain-plugin && 
+            echo "04" &&
             mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
+            echo "05" &&
             ./create-space-drain.sh development-ssb
+            echo "06"
           cf_org: gsa-datagov
           cf_space: development
           cf_username: ${{secrets.CF_SERVICE_USER}}
