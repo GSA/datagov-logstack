@@ -50,7 +50,7 @@ jobs:
           sleep 150  # Logstash is very slow to start up
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-development-datagov.app.cloud.gov)" ]
 
-drain-apps-in-development-ssb:
+  drain-apps-in-development-ssb:
     name: drain everything in development-ssb space
     environment: development-ssb
     runs-on: ubuntu-latest
