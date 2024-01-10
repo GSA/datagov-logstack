@@ -63,7 +63,6 @@ jobs:
         uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
-            sudo apt-get install -y jq &&
             curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
             cf install-plugin -f -r drain-plugin &&
             rm -f drain-plugin && 
