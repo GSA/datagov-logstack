@@ -52,7 +52,7 @@ jobs:
 
   drain-apps-in-development:
     name: drain everything in development space
-    environment: development-ssb
+    environment: development
     runs-on: ubuntu-latest
     needs:
       - deploy-development-ssb
