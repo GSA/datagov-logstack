@@ -36,6 +36,7 @@ echo "test... finish download..."
 # echo "test ... linux version"
 # cat /etc/lsb-release
 pwd
+ls -l
 cd /github/home/.cf/plugins/
 ls -l
 ldd drain-plugin

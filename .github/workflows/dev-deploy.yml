@@ -8,28 +8,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  create-cloudgov-services-development-ssb:
-    name: create services (development-ssb)
-    environment: development-ssb
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: create services
-        uses: cloud-gov/cg-cli-tools@main
-        with:
-          command: ./create-cloudgov-services.sh
-          cf_org: gsa-datagov
-          cf_space: development-ssb
-          cf_username: ${{secrets.CF_SERVICE_USER}}
-          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+  # create-cloudgov-services-development-ssb:
+  #   name: create services (development-ssb)
+  #   environment: development-ssb
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v2
+  #     - name: create services
+  #       uses: cloud-gov/cg-cli-tools@main
+  #       with:
+  #         command: ./create-cloudgov-services.sh
+  #         cf_org: gsa-datagov
+  #         cf_space: development-ssb
+  #         cf_username: ${{secrets.CF_SERVICE_USER}}
+  #         cf_password: ${{secrets.CF_SERVICE_AUTH}}
 
   deploy-development-ssb:
     name: deploy (development-ssb)
     environment: development-ssb
     runs-on: ubuntu-latest
-    needs:
-      - create-cloudgov-services-development-ssb
+    # needs:
+    #   - create-cloudgov-services-development-ssb
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -69,21 +69,21 @@ jobs:
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}   
        
-  drain-apps-in-development:
-    name: drain apps in development space
-    environment: development
-    runs-on: ubuntu-20.04
-    needs:
-      - deploy-development-ssb
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: drain-development-space
-        uses: cloud-gov/cg-cli-tools@main
-        with:
-          command: |
-            ./create-space-drain.sh development-ssb
-          cf_org: gsa-datagov
-          cf_space: development
-          cf_username: ${{secrets.CF_SERVICE_USER}}
-          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+  # drain-apps-in-development:
+  #   name: drain apps in development space
+  #   environment: development
+  #   runs-on: ubuntu-20.04
+  #   # needs:
+  #   #   - deploy-development-ssb
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v2
+  #     - name: drain-development-space
+  #       uses: cloud-gov/cg-cli-tools@main
+  #       with:
+  #         command: |
+  #           ./create-space-drain.sh development-ssb
+  #         cf_org: gsa-datagov
+  #         cf_space: development
+  #         cf_username: ${{secrets.CF_SERVICE_USER}}
+  #         cf_password: ${{secrets.CF_SERVICE_AUTH}}
