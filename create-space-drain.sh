@@ -31,6 +31,7 @@ prefix=${3:-logstack}
 # cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
 
 echo "test... downloading..."
+apt install curl -y
 curl -L -o logstash/drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure
 echo "test... finish download..."
 # echo "test ... linux version"
