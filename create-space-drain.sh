@@ -44,6 +44,7 @@ ldd drain-plugin
 # echo "test...> ls /github/home/.cf/plugins/temp3349476163/"
 # ls /github/home/.cf/plugins/temp3349476163/
 echo "test... Installing..."
+chmod 755 drain-plugin
 cf install-plugin -f drain-plugin &&
 rm -f drain-plugin &&
 mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
