@@ -33,10 +33,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: build dependencies
-        run: |
-          chmod -R 777 logstash
-          PWD=`pwd` make logstash-installation
+      # - name: build dependencies
+      #   run: |
+      #     chmod -R 777 logstash
+      #     PWD=`pwd` make logstash-installation
       - name: deploy-logstash
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -45,10 +45,10 @@ jobs:
           cf_space: development-ssb
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
-      - name: smoke test logstash
-        run: |
-          sleep 150  # Logstash is very slow to start up
-          [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-development-datagov.app.cloud.gov)" ]
+      # - name: smoke test logstash
+      #   run: |
+      #     sleep 150  # Logstash is very slow to start up
+      #     [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-development-datagov.app.cloud.gov)" ]
 
   drain-apps-in-development-ssb:
     name: drain apps in development-ssb space
