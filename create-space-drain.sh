@@ -34,16 +34,16 @@ prefix=${3:-logstack}
 echo "test... downloading..."
 curl -L -o /github/home/.cf/plugins/drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure &&
 echo "test... finish download..."
+cd /github/home/.cf/plugins/
 ls -l
 ldd drain-plugin
-echo "test...> ls /github/home/.cf"
-ls /github/home/.cf
-echo "test...> ls /github/home/.cf/plugins"
-ls /github/home/.cf/plugins
+# echo "test...> ls /github/home/.cf"
+# ls /github/home/.cf
+# echo "test...> ls /github/home/.cf/plugins"
+# ls /github/home/.cf/plugins
 # echo "test...> ls /github/home/.cf/plugins/temp3349476163/"
 # ls /github/home/.cf/plugins/temp3349476163/
 echo "test... Installing..."
-cd /github/home/.cf/plugins
 cf install-plugin -f drain-plugin &&
 rm -f drain-plugin &&
 mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
