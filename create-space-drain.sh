@@ -31,10 +31,10 @@ prefix=${3:-logstack}
 # cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
 
 echo "test... downloading..."
-curl -L -o /github/home/.cf/plugins/drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure &&
+curl -L -o /github/home/.cf/plugins/drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure
 echo "test... finish download..."
-echo "test ... linux version"
-cat /etc/lsb-release
+# echo "test ... linux version"
+# cat /etc/lsb-release
 pwd
 cd /github/home/.cf/plugins/
 ls -l
@@ -48,8 +48,8 @@ ldd drain-plugin
 echo "test... Installing..."
 chmod 755 drain-plugin
 ls -l
-cf install-plugin -f drain-plugin &&
-rm -f drain-plugin &&
+cf install-plugin -f drain-plugin 
+rm -f drain-plugin 
 mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
 echo "test cf-drain-cli plugin installed successfully."
 
