@@ -51,7 +51,7 @@ jobs:
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-development-datagov.app.cloud.gov)" ]
 
   drain-apps-in-development-ssb:
-    name: drain everything in development-ssb space
+    name: drain apps in development-ssb space
     environment: development-ssb
     runs-on: ubuntu-latest
     needs:
@@ -59,7 +59,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: drain-development-space
+      - name: drain-development-ssb-space
         uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
@@ -70,7 +70,7 @@ jobs:
           cf_password: ${{secrets.CF_SERVICE_AUTH}}   
        
   drain-apps-in-development:
-    name: drain everything in development space
+    name: drain apps in development space
     environment: development
     runs-on: ubuntu-latest
     needs:
