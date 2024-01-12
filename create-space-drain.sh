@@ -16,9 +16,9 @@ drain_name=${2:-logstack-shipper}
 prefix=${3:-logstack}
 
 # If the app already exists, exit early/successfully
-cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
+# cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
 
-# install drain plugin if it isn't installed
+# # install drain plugin if it isn't installed
 # if ! cf plugins | grep -q drain; then
 #     echo "cf-drain-cli plugin not found. Installing..."
 #     curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure &&
