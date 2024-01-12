@@ -15,6 +15,9 @@ drain_space=${1:-management}
 drain_name=${2:-logstack-shipper}
 prefix=${3:-logstack}
 
+# If the app already exists, exit early/successfully
+cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
+
 # install drain plugin if it isn't installed
 if ! cf plugins | grep -q drain; then
     echo "cf-drain-cli plugin not found. Installing..."
@@ -27,9 +30,6 @@ if ! cf plugins | grep -q drain; then
 else
     echo "cf-drain-cli plugin already exists."
 fi
-
-# If the app already exists, exit early/successfully
-cf app "${prefix}-space-drain" > /dev/null 2>&1 && echo "Drain already exists." && exit 0
 
 space=$(cf target | grep space: | cut -d : -f 2 | sed s/\ //g)
 
