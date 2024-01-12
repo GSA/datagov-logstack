@@ -36,9 +36,11 @@ curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/do
 echo "test... finish download..."
 ls -l
 ldd drain-plugin
-echo "ls /github/home/.cf/plugins"
+echo "test...> ls /github/home/.cf"
+ls /github/home/.cf
+echo "test...> ls /github/home/.cf/plugins"
 ls /github/home/.cf/plugins
-echo "ls /github/home/.cf/plugins/temp3349476163/"
+echo "test...> ls /github/home/.cf/plugins/temp3349476163/"
 ls /github/home/.cf/plugins/temp3349476163/
 echo "test... Installing..."
 cf install-plugin -f drain-plugin &&
