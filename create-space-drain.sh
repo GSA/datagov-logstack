@@ -33,6 +33,7 @@ prefix=${3:-logstack}
 
 echo "test... downloading..."
 curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure &&
+echo "test... finish download..."
 ls -l
 ldd drain-plugin
 echo "test... Installing..."
