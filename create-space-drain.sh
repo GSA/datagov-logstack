@@ -31,6 +31,9 @@ prefix=${3:-logstack}
 # fi
 
 
+echo "test...... "
+echo "test... Uinstalling..."
+cf uninstall-plugin drains
 echo "test... Installing..."
 curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux --insecure &&
 cf install-plugin -f  drain-plugin &&
