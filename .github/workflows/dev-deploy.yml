@@ -72,7 +72,7 @@ jobs:
   drain-apps-in-development:
     name: drain apps in development space
     environment: development
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs:
       - deploy-development-ssb
     steps:

@@ -103,7 +103,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-management-staging-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
             ./create-space-drain.sh management-staging
@@ -122,7 +122,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-staging-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
             ./create-space-drain.sh management-staging
@@ -141,7 +141,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-management-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
             ./create-space-drain.sh management
@@ -160,7 +160,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-prod-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
             ./create-space-drain.sh management
@@ -179,7 +179,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-prod-egress-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
             ./create-space-drain.sh management
