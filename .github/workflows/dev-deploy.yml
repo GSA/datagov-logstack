@@ -50,8 +50,8 @@ jobs:
           sleep 150  # Logstash is very slow to start up
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-development-datagov.app.cloud.gov)" ]
 
-  drain-apps-in-development:
-    name: drain everything in development space
+  drain-apps-in-development-ssb:
+    name: drain apps in development-ssb space
     environment: development-ssb
     runs-on: ubuntu-latest
     needs:
@@ -59,15 +59,29 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: drain-development-space
-        uses: cloud-gov/cg-cli-tools@main
+      - name: drain-development-ssb-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
-            apt-get install -y jq && 
-            curl -L -o drain-plugin https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
-            cf install-plugin -f -r drain-plugin && 
-            rm -f drain-plugin && 
-            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
+            ./create-space-drain.sh development-ssb
+          cf_org: gsa-datagov
+          cf_space: development-ssb
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}   
+       
+  drain-apps-in-development:
+    name: drain apps in development space
+    environment: development
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-development-ssb
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: drain-development-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        with:
+          command: |
             ./create-space-drain.sh development-ssb
           cf_org: gsa-datagov
           cf_space: development
