@@ -9,7 +9,7 @@ on:
 
 jobs:
   create-cloudgov-services-management-staging:
-    name: create services (management-staging) 
+    name: create services (management-staging)
     environment: management-staging
     runs-on: ubuntu-latest
     steps:
