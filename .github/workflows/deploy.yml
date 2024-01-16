@@ -93,8 +93,46 @@ jobs:
           sleep 150  # Logstash is very slow to start up
           [ "401" = "$(curl -w '%{http_code}' --output /dev/null --silent https://logstash-stage-datagov.app.cloud.gov)" ]
 
+  drain-apps-in-management-staging:
+    name: drain apps in management-staging space
+    environment: management-staging
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-management-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: drain-management-staging-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        with:
+          command: |
+            ./create-space-drain.sh management-staging
+          cf_org: gsa-datagov
+          cf_space: management-staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+
   drain-apps-in-staging:
-    name: drain everything in staging space
+    name: drain apps in staging space
+    environment: staging
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-management-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: drain-staging-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        with:
+          command: |
+            ./create-space-drain.sh management-staging
+          cf_org: gsa-datagov
+          cf_space: staging
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+
+  drain-apps-in-management:
+    name: drain apps in management space
     environment: management
     runs-on: ubuntu-latest
     needs:
@@ -102,24 +140,19 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: drain-staging-space
-        uses: cloud-gov/cg-cli-tools@main
+      - name: drain-management-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
-            apt-get install -y jq && 
-            curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
-            cf install-plugin -f -r drain-plugin && 
-            rm -f drain-plugin && 
-            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
-            ./create-space-drain.sh management-staging
+            ./create-space-drain.sh management
           cf_org: gsa-datagov
-          cf_space: staging
+          cf_space: management
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
 
   drain-apps-in-prod:
-    name: drain everything in prod space
-    environment: management
+    name: drain apps in prod space
+    environment: prod
     runs-on: ubuntu-latest
     needs:
       - deploy-management
@@ -127,16 +160,30 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-prod-space
-        uses: cloud-gov/cg-cli-tools@main
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
         with:
           command: |
-            apt-get install -y jq && 
-            curl -L -o drain-plugin  https://github.com/cloudfoundry/cf-drain-cli/releases/download/v2.0.0/cf-drain-cli-linux && 
-            cf install-plugin -f -r drain-plugin &&
-            rm -f drain-plugin && 
-            mkdir -p /root/.cf/ && touch /root/.cf/config.json && 
             ./create-space-drain.sh management
           cf_org: gsa-datagov
           cf_space: prod
+          cf_username: ${{secrets.CF_SERVICE_USER}}
+          cf_password: ${{secrets.CF_SERVICE_AUTH}}
+
+  drain-apps-in-prod-egress:
+    name: drain apps in prod-egress space
+    environment: prod-egress
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-management
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: drain-prod-egress-space
+        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        with:
+          command: |
+            ./create-space-drain.sh management
+          cf_org: gsa-datagov
+          cf_space: prod-egress
           cf_username: ${{secrets.CF_SERVICE_USER}}
           cf_password: ${{secrets.CF_SERVICE_AUTH}}
