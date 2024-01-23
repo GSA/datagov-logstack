@@ -10,10 +10,11 @@ logstash_instances: 1
 logstash_memory: 1024
 # Assign route for the log shipper. This will be used as the logdrain for other
 # Cloud Foundry applications.
-hostname: my-logdrain
+hostname: logstash-development-datagov
 domain: app.cloud.gov
 https_proxy:
 
 # Optional license key for delivering logs to New Relic
 # See https://github.com/newrelic/logstash-output-plugin
-# logstash_newrelic_license_key: 
+# logstash_newrelic_license_key:
+# logstash_newrelic_log_uri: https://gov-log-api.newrelic.com/log/v1
