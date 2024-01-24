@@ -30,6 +30,11 @@ Alternatively, you can auto-drain all apps in a given space by targeting that sp
     cf target -s prod
     ./create-space-drain.sh
 
+Note: at development space, it will use the logstack-shipper in development-ssb space:
+
+    cf target -s development
+    ./create-space-drain.sh development-ssb
+
 After a short delay, logs should begin to flow automatically.
 
 ## Setup
