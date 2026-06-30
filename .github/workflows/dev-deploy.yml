@@ -60,7 +60,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-development-ssb-space
-        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
             ./create-space-drain.sh development-ssb
@@ -79,7 +79,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: drain-development-space
-        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
             ./create-space-drain.sh development-ssb
