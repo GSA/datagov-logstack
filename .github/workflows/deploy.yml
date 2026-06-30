@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: create services
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -32,7 +32,7 @@ jobs:
       - create-cloudgov-services-management-staging
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: build dependencies
         run: |
           chmod -R 777 logstash
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: create services
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -75,7 +75,7 @@ jobs:
       - deploy-management-staging
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: build dependencies
         run: |
           chmod -R 777 logstash
@@ -101,7 +101,7 @@ jobs:
       - deploy-management-staging
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-management-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -120,7 +120,7 @@ jobs:
       - deploy-management-staging
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-staging-space
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -139,7 +139,7 @@ jobs:
       - deploy-management
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-management-space
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -158,7 +158,7 @@ jobs:
       - deploy-management
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-prod-space
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -177,7 +177,7 @@ jobs:
       - deploy-management
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-prod-egress-space
         uses: cloud-gov/cg-cli-tools@main
         with:
