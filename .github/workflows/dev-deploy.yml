@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: create services
         uses: cloud-gov/cg-cli-tools@main
         with:
@@ -32,7 +32,7 @@ jobs:
       - create-cloudgov-services-development-ssb
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: build dependencies
         run: |
           chmod -R 777 logstash
@@ -58,9 +58,9 @@ jobs:
       - deploy-development-ssb
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-development-ssb-space
-        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
             ./create-space-drain.sh development-ssb
@@ -77,9 +77,9 @@ jobs:
       - deploy-development-ssb
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: drain-development-space
-        uses: cloud-gov/cg-cli-tools@37d58fc10abf00a45926e8886879c81a498f7ea8
+        uses: cloud-gov/cg-cli-tools@main
         with:
           command: |
             ./create-space-drain.sh development-ssb
