@@ -8,6 +8,8 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-latest
+    env:
+      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
     steps:
       - name: checkout
         uses: actions/checkout@v2
