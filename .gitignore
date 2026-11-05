@@ -4,3 +4,7 @@ logstash/plugins.zip
 logstash/awscliv2.zip
 .DS_Store
 volume/
+
+__pycache__
+
+.vscode/
