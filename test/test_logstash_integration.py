@@ -130,9 +130,8 @@ class TestRouterLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
-            '[tags@47450 app="catalog" source_type="RTR" instance_id="0" '
-            'ip="10.10.1.5" organization_id="org-123" organization_name="gsa-datagov" '
-            'space_id="space-456" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="router" '
+            'space_name="prod"] '
             'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
             '"GET /dataset/water-quality HTTP/1.1" 200 0 21445 "-" '
             '"Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "127.0.0.1:54321" '
@@ -165,7 +164,8 @@ class TestRouterLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="router" '
+            'space_name="prod"] '
             'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
             '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
             '"127.0.0.1:54321" "10.10.2.10:8080" '
@@ -191,7 +191,8 @@ class TestRouterLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="router" '
+            'space_name="prod"] '
             'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
             '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
             '"127.0.0.1:54321" "10.10.2.10:8080" '
@@ -219,7 +220,8 @@ class TestApplicationLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             '2026-11-13 20:00:00,123 INFO  [ckan.config.middleware.flask_app]  '
             '200 /dataset/water-quality render time 0.045 seconds'
         )
@@ -244,7 +246,8 @@ class TestApplicationLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             '2026-11-13 20:00:00,123 INFO  [ckan.config.middleware.flask_app]  '
             '404 /dataset/nonexistent render time 0.012 seconds'
         )
@@ -270,7 +273,8 @@ class TestWAFLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             'NginxLog "GET /dataset/123 HTTP/1.1" 429 456 "bot-detection"'
         )
 
@@ -296,7 +300,8 @@ class TestWAFLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             'NginxLog "POST /api/action/package_search HTTP/2.0" 429 0 "rate-limit"'
         )
 
@@ -318,7 +323,8 @@ class TestWAFLogParsing:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             'NginxLog "GET /dataset/search?q=water&page=2 HTTP/1.1" 429 100 "query-permutation"'
         )
 
@@ -344,7 +350,8 @@ class TestDropFilters:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             'NginxLog "GET /dataset/123 HTTP/1.1" 200 321 "-"'
         )
 
@@ -363,7 +370,8 @@ class TestDropFilters:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 logstash-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="router" '
+            'space_name="prod"] '
             'logstash-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
             '"GET /health HTTP/1.1" 200 0 50 "-" "CloudFoundry" '
             '"127.0.0.1:54321" "10.10.2.10:8080" '
@@ -385,7 +393,8 @@ class TestDropFilters:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="app" '
+            'space_name="prod"] '
             'NginxLog "GET /dataset/123 HTTP/1.1" 429 456 "bot-detection"'
         )
 
@@ -409,7 +418,8 @@ class TestFieldRemoval:
         log_message = (
             '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
             '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
-            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" job="router" '
+            'space_name="prod"] '
             'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
             '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
             '"127.0.0.1:54321" "10.10.2.10:8080" '
