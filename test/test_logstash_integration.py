@@ -397,3 +397,33 @@ class TestDropFilters:
 
         assert len(events) == 1
         assert events[0]['waf_detection'] == 'bot-detection'
+
+
+class TestFieldRemoval:
+    """Integration tests for field removal based on environment."""
+
+    def test_production_removes_sensitive_fields(self, s3_client):
+        """Test production environment removes log_data and raw_message_content."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
+            '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
+            '"127.0.0.1:54321" "10.10.2.10:8080" '
+            'x_forwarded_for:"203.0.113.42" x_forwarded_proto:"https"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert 'log_data' not in event
+        assert 'raw_message_content' not in event
+        assert 'hostname' in event
+        assert 'http_method' in event
