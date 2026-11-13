@@ -207,3 +207,54 @@ class TestRouterLogParsing:
 
         event = events[0]
         assert event['real_ip'] == '10.0.0.5'
+
+
+class TestApplicationLogParsing:
+    """Integration tests for CKAN application log parsing."""
+
+    def test_ckan_log_basic_parsing(self, s3_client):
+        """Test CKAN log extracts timestamp, level, logger, status, path, render time."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '2026-11-13 20:00:00,123 INFO  [ckan.config.middleware.flask_app]  '
+            '200 /dataset/water-quality render time 0.045 seconds'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['log_level'] == 'INFO'
+        assert event['logger'] == 'ckan.config.middleware.flask_app'
+        assert event['status'] == 200
+        assert event['request_path'] == '/dataset/water-quality'
+        assert event['render_time'] == 0.045
+
+    def test_ckan_log_error_status(self, s3_client):
+        """Test CKAN log with 404 status."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            '2026-11-13 20:00:00,123 INFO  [ckan.config.middleware.flask_app]  '
+            '404 /dataset/nonexistent render time 0.012 seconds'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['status'] == 404
+        assert event['request_path'] == '/dataset/nonexistent'
