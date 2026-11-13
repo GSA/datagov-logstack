@@ -258,3 +258,77 @@ class TestApplicationLogParsing:
         event = events[0]
         assert event['status'] == 404
         assert event['request_path'] == '/dataset/nonexistent'
+
+
+class TestWAFLogParsing:
+    """Integration tests for WAF Nginx log parsing."""
+
+    def test_waf_log_bot_detection(self, s3_client):
+        """Test WAF log with bot detection extracts all fields."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'NginxLog "GET /dataset/123 HTTP/1.1" 429 456 "bot-detection"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['http_method'] == 'GET'
+        assert event['request'] == '/dataset/123'
+        assert event['request_path'] == '/dataset/123'
+        assert event['http_version'] == 'HTTP/1.1'
+        assert event['status'] == 429
+        assert event['nginx_bytes_sent'] == 456
+        assert event['waf_detection'] == 'bot-detection'
+
+    def test_waf_log_rate_limit(self, s3_client):
+        """Test WAF log with rate-limit detection."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'NginxLog "POST /api/action/package_search HTTP/2.0" 429 0 "rate-limit"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['http_method'] == 'POST'
+        assert event['request_path'] == '/api/action/package_search'
+        assert event['waf_detection'] == 'rate-limit'
+
+    def test_waf_log_query_string_preserved(self, s3_client):
+        """Test WAF log preserves query string separately from path."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'NginxLog "GET /dataset/search?q=water&page=2 HTTP/1.1" 429 100 "query-permutation"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['request'] == '/dataset/search?q=water&page=2'
+        assert event['request_path'] == '/dataset/search'
+        assert event['waf_detection'] == 'query-permutation'
