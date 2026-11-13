@@ -332,3 +332,68 @@ class TestWAFLogParsing:
         assert event['request'] == '/dataset/search?q=water&page=2'
         assert event['request_path'] == '/dataset/search'
         assert event['waf_detection'] == 'query-permutation'
+
+
+class TestDropFilters:
+    """Integration tests for Logstash drop filters."""
+
+    def test_drop_waf_log_without_detection(self, s3_client):
+        """Test WAF logs without detection (dash) are dropped."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'NginxLog "GET /dataset/123 HTTP/1.1" 200 321 "-"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        time.sleep(5)
+
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+        assert len(events) == 0
+
+    def test_drop_logstash_health_check(self, s3_client):
+        """Test logstash health check logs (200 status) are dropped."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 logstash-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'logstash-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
+            '"GET /health HTTP/1.1" 200 0 50 "-" "CloudFoundry" '
+            '"127.0.0.1:54321" "10.10.2.10:8080" '
+            'x_forwarded_for:"127.0.0.1" x_forwarded_proto:"http"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        time.sleep(5)
+
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+        assert len(events) == 0
+
+    def test_keep_waf_log_with_detection(self, s3_client):
+        """Test WAF logs with detection are kept."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [APP/PROC/WEB/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'NginxLog "GET /dataset/123 HTTP/1.1" 429 456 "bot-detection"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        assert len(events) == 1
+        assert events[0]['waf_detection'] == 'bot-detection'
