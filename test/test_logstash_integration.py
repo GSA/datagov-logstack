@@ -118,3 +118,92 @@ def clear_s3_bucket(s3_client, bucket):
             s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
     except Exception:
         pass
+
+
+class TestRouterLogParsing:
+    """Integration tests for Cloud Foundry Router log parsing."""
+
+    def test_router_log_basic_parsing(self, s3_client):
+        """Test router log extracts basic HTTP request fields."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
+            '[tags@47450 app="catalog" source_type="RTR" instance_id="0" '
+            'ip="10.10.1.5" organization_id="org-123" organization_name="gsa-datagov" '
+            'space_id="space-456" space_name="prod"] '
+            'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
+            '"GET /dataset/water-quality HTTP/1.1" 200 0 21445 "-" '
+            '"Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "127.0.0.1:54321" '
+            '"10.10.2.10:8080" x_forwarded_for:"203.0.113.42, 64.252.66.100, 127.0.0.1" '
+            'x_forwarded_proto:"https" vcap_request_id:"req-abc-123" '
+            'response_time:0.023 gorouter_time:0.001 app_id:"app-789" app_index:"0"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        keys = wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        assert len(keys) > 0
+
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+        assert len(events) > 0
+
+        event = events[0]
+        assert event['hostname'] == 'catalog-prod.data.gov'
+        assert event['http_method'] == 'GET'
+        assert event['request'] == '/dataset/water-quality'
+        assert event['http_version'] == 'HTTP/1.1'
+        assert event['status'] == 200
+        assert 'timestamp' in event
+
+    def test_router_log_real_ip_extraction(self, s3_client):
+        """Test router log extracts real client IP from X-Forwarded-For."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
+            '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
+            '"127.0.0.1:54321" "10.10.2.10:8080" '
+            'x_forwarded_for:"203.0.113.42, 10.0.0.5, 127.0.0.1" '
+            'x_forwarded_proto:"https"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['real_ip'] == '203.0.113.42'
+        assert '10.0.0.5' not in event.get('forwarded_ips', '')
+        assert '127.0.0.1' not in event.get('forwarded_ips', '')
+
+    def test_router_log_skips_all_internal_ips(self, s3_client):
+        """Test router log IP extraction when all IPs are internal."""
+        clear_s3_bucket(s3_client, S3_BUCKET)
+
+        log_message = (
+            '<14>1 2026-11-13T20:00:00.000000+00:00 catalog-prod.data.gov '
+            '01234567-89ab-cdef-0123-456789abcdef [RTR/0] - '
+            '[tags@47450 instance_id="0" ip="10.10.1.5" space_name="prod"] '
+            'catalog-prod.data.gov - [2026-11-13T20:00:00.123456789Z] '
+            '"GET /dataset/test HTTP/1.1" 200 0 1000 "-" "curl/7.0" '
+            '"127.0.0.1:54321" "10.10.2.10:8080" '
+            'x_forwarded_for:"10.0.0.5, 192.168.1.10, 127.0.0.1" '
+            'x_forwarded_proto:"https"'
+        )
+
+        response = send_log_event(log_message)
+        assert response.status_code == 200
+
+        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
+        events = get_s3_log_events(s3_client, S3_BUCKET)
+
+        event = events[0]
+        assert event['real_ip'] == '10.0.0.5'
