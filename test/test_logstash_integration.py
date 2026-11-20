@@ -4,14 +4,6 @@ import pytest
 import requests
 
 
-pytestmark = pytest.mark.skip(
-    reason="Integration tests require grok pattern fixes in logstash.conf:71. "
-    "The pattern 'job=\"%{GREEDYDATA:skip} space_name=' cannot match because "
-    "GREEDYDATA is greedy and consumes the rest of the line. "
-    "These tests document expected behavior once patterns are fixed."
-)
-
-
 LOGSTASH_HTTP_URL = 'http://logstash:8080'
 LOGSTASH_AUTH = ('logstash', 'logstash')
 LOCALSTACK_ENDPOINT = 'http://localstack:4566'
@@ -51,28 +43,25 @@ def send_log_event(message):
     return response
 
 
-def wait_for_s3_objects(s3_client, bucket, min_count=1, timeout=30):
+def wait_for_log_events(s3_client, bucket, min_count=1, timeout=30):
     """
-    Wait for S3 objects to appear in bucket.
+    Wait for parsed log events to appear in bucket.
 
     Args:
         s3_client: boto3 S3 client
         bucket: S3 bucket name
-        min_count: Minimum number of objects to wait for
+        min_count: Minimum number of events to wait for
         timeout: Maximum seconds to wait
 
     Returns:
-        List of S3 object keys
+        List of parsed log event dicts
     """
     start_time = time.time()
 
     while time.time() - start_time < timeout:
-        try:
-            response = s3_client.list_objects_v2(Bucket=bucket)
-            if response.get('KeyCount', 0) >= min_count:
-                return [obj['Key'] for obj in response.get('Contents', [])]
-        except Exception:
-            pass
+        events = get_s3_log_events(s3_client, bucket)
+        if len(events) >= min_count:
+            return events
 
         time.sleep(1)
 
@@ -81,7 +70,8 @@ def wait_for_s3_objects(s3_client, bucket, min_count=1, timeout=30):
 
 def get_s3_log_events(s3_client, bucket):
     """
-    Retrieve all log events from S3 bucket.
+    Retrieve syslog log events from S3 bucket, ignoring heartbeat and
+    healthcheck events.
 
     Args:
         s3_client: boto3 S3 client
@@ -102,7 +92,9 @@ def get_s3_log_events(s3_client, bucket):
             for line in content.strip().split('\n'):
                 if line:
                     try:
-                        events.append(json.loads(line))
+                        event = json.loads(line)
+                        if 'proc_id' in event:
+                            events.append(event)
                     except json.JSONDecodeError:
                         pass
     except Exception:
@@ -151,10 +143,7 @@ class TestRouterLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        keys = wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        assert len(keys) > 0
-
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
         assert len(events) > 0
 
         event = events[0]
@@ -162,7 +151,7 @@ class TestRouterLogParsing:
         assert event['http_method'] == 'GET'
         assert event['request'] == '/dataset/water-quality'
         assert event['http_version'] == 'HTTP/1.1'
-        assert event['status'] == 200
+        assert event['status'] == '200'
         assert 'timestamp' in event
 
     def test_router_log_real_ip_extraction(self, s3_client):
@@ -184,13 +173,11 @@ class TestRouterLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['real_ip'] == '203.0.113.42'
-        assert '10.0.0.5' not in event.get('forwarded_ips', '')
-        assert '127.0.0.1' not in event.get('forwarded_ips', '')
+        assert event['forwarded_ips'] == '10.0.0.5, 127.0.0.1'
 
     def test_router_log_skips_all_internal_ips(self, s3_client):
         """Test router log IP extraction when all IPs are internal."""
@@ -211,8 +198,7 @@ class TestRouterLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['real_ip'] == '10.0.0.5'
@@ -237,8 +223,7 @@ class TestApplicationLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['log_level'] == 'INFO'
@@ -263,8 +248,7 @@ class TestApplicationLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['status'] == 404
@@ -289,8 +273,7 @@ class TestWAFLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['http_method'] == 'GET'
@@ -316,8 +299,7 @@ class TestWAFLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['http_method'] == 'POST'
@@ -339,8 +321,7 @@ class TestWAFLogParsing:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert event['request'] == '/dataset/search?q=water&page=2'
@@ -409,8 +390,7 @@ class TestDropFilters:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         assert len(events) == 1
         assert events[0]['waf_detection'] == 'bot-detection'
@@ -437,8 +417,7 @@ class TestFieldRemoval:
         response = send_log_event(log_message)
         assert response.status_code == 200
 
-        wait_for_s3_objects(s3_client, S3_BUCKET, min_count=1, timeout=30)
-        events = get_s3_log_events(s3_client, S3_BUCKET)
+        events = wait_for_log_events(s3_client, S3_BUCKET)
 
         event = events[0]
         assert 'log_data' not in event
