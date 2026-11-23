@@ -10,7 +10,7 @@ services:
         - CMD
         - bash
         - -c
-        - awslocal s3 ls
+        - awslocal s3 ls s3://logstash-bucket
       interval: 5s
       timeout: 10s
       start_period: 10s
@@ -24,6 +24,7 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack.d:/etc/localstack/init/ready.d"
  
   logstash:
     depends_on:
@@ -47,6 +48,8 @@ services:
       DRAIN_USER: logstash
       DRAIN_PASSWORD: logstash
       PORT: 8080
+      S3_SIZE_FILE: 1
+      S3_CODEC: json_lines
     ports:
       - 8080:8080
       - 9600:9600
